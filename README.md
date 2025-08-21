@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Day 1-100 Interactive Vocabulary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: The single-page application is enhanced with a day-based learning structure. The content is now organized by tabs (Vocabulary, Phrases, Grammar) and a new dropdown selector for the learning day (Day 1 to Day 100, with a sample of Day 1-50). This structure allows users to focus on a specific day's content without being overwhelmed by a single, massive list. The interactive flashcards, search functionality, and audio playback remain the core learning tools. The new day selector is placed prominently to guide the user's learning journey, making the application a more structured and goal-oriented tool for test preparation. -->
+    <!-- Visualization & Content Choices: Report Info: Vocabulary List (Day 1-100) -> Goal: Memorization, Structured Learning -> Viz/Presentation: Interactive Flashcards in a grid with a Day dropdown filter -> Interaction: Dropdown selection, click-to-flip cards, search bar -> Justification: Active recall is a superior learning strategy for vocabulary. The search filter enhances usability by allowing users to quickly find terms. | Report Info: Phrases List (Day 1-100) -> Goal: Memorization -> Viz/Presentation: Interactive Flashcards -> Interaction: Click-to-flip, Search Filter -> Justification: Same as vocabulary; active recall is key. | Report Info: Grammar Topics -> Goal: Inform -> Viz/Presentation: Styled List -> Interaction: Simple display -> Justification: The grammar concepts are best presented in a clear, readable format is most effective. No quantitative data is present, so no charts (Chart.js/Plotly) are necessary. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Padauk', 'Inter', sans-serif;
+            background-color: #FDF8F0; /* Warm Neutral Background */
+        }
+        .tab-active {
+            background-color: #4A5568; /* Darker accent */
+            color: white;
+            border-color: #4A5568;
+        }
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+        .flip-card-front {
+            background-color: #FFFFFF;
+            color: #2D3748;
+            border: 1px solid #E2E8F0;
+        }
+        .flip-card-back {
+            background-color: #60A5FA; /* Blue Accent */
+            color: white;
+            transform: rotateY(180deg);
+        }
+        .icon {
+            font-size: 1.5rem;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-700">IELTS Day 1 ဝေါဟာရ လေ့လာရန်</h1>
+            <p class="text-gray-500 mt-2">အပြန်အလှန်တုံ့ပြန်လေ့လာနိုင်သော Application</p>
+        </header>
+
+        <main>
+            <div class="w-full max-w-4xl mx-auto">
+                <div class="mb-6 flex flex-col sm:flex-row items-center justify-between">
+                    <div class="mb-4 sm:mb-0">
+                        <label for="day-select" class="font-semibold text-gray-700 mr-2">လေ့လာမည့်နေ့ရက်ရွေးပါ:</label>
+                        <select id="day-select" class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <nav class="flex space-x-2 sm:space-x-4 border-b border-gray-200" id="tabs">
+                        <button data-tab="vocabulary" class="tab-btn tab-active py-3 px-4 sm:px-6 font-semibold text-gray-600 rounded-t-lg border-b-2 border-transparent hover:bg-gray-200 transition"><span class="icon">📖</span>ဝေါဟာရ</button>
+                        <button data-tab="phrases" class="tab-btn py-3 px-4 sm:px-6 font-semibold text-gray-600 rounded-t-lg border-b-2 border-transparent hover:bg-gray-200 transition"><span class="icon">💬</span>အသုံးအနှုန်းများ</button>
+                        <button data-tab="grammar" class="tab-btn py-3 px-4 sm:px-6 font-semibold text-gray-600 rounded-t-lg border-b-2 border-transparent hover:bg-gray-200 transition"><span class="icon">📝</span>သဒ္ဒါ</button>
+                    </nav>
+                </div>
+
+                <div id="tab-content">
+                    <div id="vocabulary-content" class="tab-pane">
+                        <p class="text-center text-gray-500 mb-4">ဤဝေါဟာရများကို လေ့လာရန် ကတ်ကိုနှိပ်ပါ။</p>
+                        <input type="text" id="vocab-search" placeholder="စကားလုံးရှာရန်..." class="w-full p-3 mb-6 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div id="vocabulary-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        </div>
+                    </div>
+                    <div id="phrases-content" class="tab-pane hidden">
+                        <p class="text-center text-gray-500 mb-4">ဤအသုံးအနှုန်းများကို လေ့လာရန် ကတ်ကိုနှိပ်ပါ။</p>
+                        <input type="text" id="phrase-search" placeholder="အသုံးအနှုန်းရှာရန်..." class="w-full p-3 mb-6 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div id="phrases-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        </div>
+                    </div>
+                    <div id="grammar-content" class="tab-pane hidden">
+                         <p class="text-center text-gray-500 mb-4">Day 1 အတွက် အဓိကကျသော သဒ္ဒါหัวข้อများ။</p>
+                        <div id="grammar-list" class="bg-white p-6 rounded-lg shadow-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
+    <script>
+        const allVocabData = {
+            'Day 1': [
+                { en: "Academic", my: "ပညာရပ်ဆိုင်ရာ" }, { en: "General Training", my: "အထွေထွေလေ့ကျင့်မှု" }, { en: "Essay", my: "စာစီစာကုံး" }, { en: "Opinion", my: "သဘောထား၊ အမြင်" }, { en: "Advantage", my: "အားသာချက်" }, { en: "Disadvantage", my: "အားနည်းချက်" }, { en: "Benefit", my: "အကျိုးကျေးဇူး" }, { en: "Global", my: "ကမ္ဘာလုံးဆိုင်ရာ" }, { en: "Environment", my: "ပတ်ဝန်းကျင်" }, { en: "Technology", my: "နည်းပညာ" }, { en: "Development", my: "ဖွံ့ဖြိုးတိုးတက်မှု" }, { en: "Communication", my: "ဆက်သွယ်ရေး" }, { en: "Education", my: "ပညာရေး" }, { en: "Society", my: "လူ့အဖွဲ့အစည်း" }, { en: "Solution", my: "ဖြေရှင်းချက်" }, { en: "Impact", my: "အကျိုးသက်ရောက်မှု" }, { en: "Evidence", my: "သက်သေအထောက်အထား" }, { en: "Process", my: "လုပ်ငန်းစဉ်" }, { en: "Issue", my: "ပြဿနာ" }, { en: "Research", my: "သုတေသန" }
+            ],
+            'Day 2': [
+                { en: "Furthermore", my: "ထို့အပြင်" }, { en: "However", my: "သို့သော်" }, { en: "Therefore", my: "ထို့ကြောင့်" }, { en: "In contrast", my: "ဆန့်ကျင်ဘက်အားဖြင့်" }, { en: "Conversely", my: "ပြောင်းပြန်အားဖြင့်" }, { en: "Consequently", my: "ရလဒ်အနေဖြင့်" }, { en: "Initially", my: "အစပိုင်းတွင်" }, { en: "Subsequent", my: "နောက်ပိုင်းတွင်" }, { en: "Ultimately", my: "နောက်ဆုံးတွင်" }, { en: "In conclusion", my: "နိဂုံးချုပ်အားဖြင့်" }, { en: "For instance", my: "ဥပမာအားဖြင့်" }, { en: "To illustrate", my: "ရှင်းပြရလျှင်" }, { en: "As a result", my: "အကျိုးဆက်အနေဖြင့်" }, { en: "Provided that", my: "ပေးထားချက်အရ" }, { en: "In order to", my: "နိုင်ရန်အတွက်" }, { en: "Similarly", my: "အလားတူ" }, { en: "Nevertheless", my: "မည်သို့ပင်ဆိုစေကာမူ" }, { en: "In summary", my: "အချုပ်အားဖြင့်" }, { en: "To clarify", my: "ရှင်းရှင်းလင်းလင်းပြောရလျှင်" }, { en: "In particular", my: "အထူးသဖြင့်" }
+            ],
+            'Day 3': [
+                { en: "Achieve", my: "အောင်မြင်သည်" }, { en: "Adopt", my: "လက်ခံသည်" }, { en: "Analyze", my: "ဆန်းစစ်သည်" }, { en: "Assess", my: "အကဲဖြတ်သည်" }, { en: "Assume", my: "ယူဆသည်" }, { en: "Benefit", my: "အကျိုးရှိသည်" }, { en: "Challenge", my: "စိန်ခေါ်သည်" }, { en: "Compare", my: "နှိုင်းယှဉ်သည်" }, { en: "Conduct", my: "ဆောင်ရွက်သည်" }, { en: "Define", my: "အဓိပ္ပာယ်သတ်မှတ်သည်" }, { en: "Distribute", my: "ဖြန့်ဝေသည်" }, { en: "Establish", my: "တည်ထောင်သည်" }, { en: "Evaluate", my: "အကဲဖြတ်သည်" }, { en: "Examine", my: "စစ်ဆေးသည်" }, { en: "Implement", my: "အကောင်အထည်ဖော်သည်" }, { en: "Improve", my: "တိုးတက်စေသည်" }, { en: "Justify", my: "ဆင်ခြေပေးသည်" }, { en: "Maintain", my: "ထိန်းသိမ်းသည်" }, { en: "Propose", my: "အဆိုပြုသည်" }, { en: "Support", my: "ထောက်ခံသည်" }
+            ],
+            // Day 4 to Day 50
+            'Day 4': [
+                { en: "Abstract", my: "အတိအကျမရှိသော" }, { en: "Adequate", my: "လုံလောက်သော" }, { en: "Complex", my: "ရှုပ်ထွေးသော" }, { en: "Crucial", my: "အရေးကြီးသော" }, { en: "Diverse", my: "မျိုးစုံသော" }, { en: "Effective", my: "ထိရောက်သော" }, { en: "Essential", my: "မရှိမဖြစ်လိုအပ်သော" }, { en: "Flexible", my: "ပြောင်းလွယ်ပြင်လွယ်ရှိသော" }, { en: "Fundamental", my: "အခြေခံသော" }, { en: "Ideal", my: "အကောင်းဆုံးသော" }, { en: "Implications", my: "အကျိုးသက်ရောက်မှု" }, { en: "Inadequate", my: "မလုံလောက်သော" }, { en: "Innovative", my: "ဆန်းသစ်သော" }, { en: "Potential", my: "ဖြစ်နိုင်ခြေ" }, { en: "Relevant", my: "သက်ဆိုင်သော" }, { en: "Reliable", my: "ယုံကြည်စိတ်ချရသော" }, { en: "Substantial", my: "များပြားသော" }, { en: "Sufficient", my: "လုံလောက်သော" }, { en: "Unique", my: "ထူးခြားသော" }, { en: "Vast", my: "ကျယ်ပြန့်သော" }
+            ],
+            'Day 5': [
+                { en: "Acquire", my: "ရရှိသည်" }, { en: "Adapt", my: "လိုက်လျောညီထွေဖြစ်သည်" }, { en: "Allocate", my: "ခွဲဝေချထားသည်" }, { en: "Alter", my: "ပြောင်းလဲသည်" }, { en: "Constitute", my: "ဖွဲ့စည်းသည်" }, { en: "Correlate", my: "ဆက်စပ်မှုရှိသည်" }, { en: "Demonstrate", my: "သရုပ်ပြသည်" }, { en: "Devise", my: "တီထွင်သည်" }, { en: "Differentiate", my: "ကွဲပြားစေသည်" }, { en: "Eliminate", my: "ဖယ်ရှားသည်" }, { en: "Emerge", my: "ပေါ်ပေါက်လာသည်" }, { en: "Exceed", my: "ကျော်လွန်သည်" }, { en: "Generate", my: "ထုတ်လုပ်သည်" }, { en: "Identify", my: "ဖော်ထုတ်သည်" }, { en: "Incorporate", my: "ပေါင်းစပ်ထည့်သွင်းသည်" }, { en: "Influence", my: "လွှမ်းမိုးသည်" }, { en: "Initiate", my: "စတင်သည်" }, { en: "Prioritize", my: "ဦးစားပေးသည်" }, { en: "Reflect", my: "ပြန်ဟပ်သည်" }, { en: "Utilize", my: "အသုံးပြုသည်" }
+            ],
+            'Day 6': [
+                { en: "Furthermore, ...", my: "ထို့အပြင်..." }, { en: "However, ...", my: "သို့သော်လည်း..." }, { en: "Therefore, ...", my: "ထို့ကြောင့်..." }, { en: "In contrast, ...", my: "ယှဉ်ကြည့်ပါက..." }, { en: "Conversely, ...", my: "ပြောင်းပြန်အားဖြင့်..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေဖြင့်..." }, { en: "Initially, ...", my: "အစပိုင်းတွင်..." }, { en: "Subsequent to this, ...", my: "ထို့နောက်တွင်..." }, { en: "Ultimately, ...", my: "နောက်ဆုံးတွင်..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရလျှင်..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "In particular, ...", my: "အထူးသဖြင့်..." }, { en: "Similarly", my: "အလားတူ" }, { en: "It is worth noting that...", my: "မှတ်သားထိုက်သည်မှာ..." }, { en: "To illustrate this point, ...", my: "ဤအချက်ကို ရှင်းပြရလျှင်..." }, { en: "The main argument is that...", my: "အဓိကအချက်ကတော့..." }, { en: "There is no doubt that...", my: "သံသယဖြစ်စရာမရှိပါဘူး..." }, { en: "On the one hand, ...", my: "တစ်ဖက်တွင်..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်တွင်..." }, { en: "This highlights the importance of...", my: "ဤသည်မှာ...၏ အရေးပါမှုကို မီးမောင်းထိုးပြသည်" }
+            ],
+            'Day 7': [
+                { en: "Abundant", my: "ပေါများသော" }, { en: "Accessible", my: "လွယ်ကူစွာရယူနိုင်သော" }, { en: "Adequate", my: "လုံလောက်သော" }, { en: "Alternative", my: "အခြားရွေးချယ်စရာ" }, { en: "Analogy", my: "နှိုင်းယှဉ်ချက်" }, { en: "Bias", my: "ဘက်လိုက်မှု" }, { en: "Capacity", my: "စွမ်းရည်၊ စွမ်းဆောင်ရည်" }, { en: "Consistent", my: "တည်ငြိမ်သော၊ တစ်သမတ်တည်းဖြစ်သော" }, { en: "Conventional", my: "ရိုးရာ၊ သမားရိုးကျ" }, { en: "Criterion", my: "စံနှုန်း" }, { en: "Depict", my: "ပုံဖော်သည်" }, { en: "Distinct", my: "ကွဲပြားခြားနားသော" }, { en: "Dynamics", my: "လှုပ်ရှားမှု" }, { en: "Elaborate", my: "အသေးစိတ်ရှင်းပြသည်" }, { en: "Facilitate", my: "လွယ်ကူချောမွေ့စေသည်" }, { en: "Fluctuate", my: "အတက်အကျရှိသည်" }, { en: "Hypothesis", my: "ကြိုတင်ယူဆချက်" }, { en: "Integral", my: "မရှိမဖြစ်သော" }, { en: "Interpret", my: "အဓိပ္ပာယ်ဖွင့်ဆိုသည်" }, { en: "Leverage", my: "အသုံးချသည်" }
+            ],
+            'Day 8': [
+                { en: "Abstract", my: "သဘောတရား" }, { en: "Assume", my: "ယူဆသည်" }, { en: "Convey", my: "သယ်ဆောင်သည်၊ ဖော်ပြသည်" }, { en: "Crucial", my: "အရေးပါသော" }, { en: "Despite", my: "ဖြစ်လင့်ကစား" }, { en: "Dominate", my: "လွှမ်းမိုးသည်" }, { en: "Emphasize", my: "အလေးထားသည်" }, { en: "Encourage", my: "အားပေးသည်" }, { en: "Enhance", my: "မြှင့်တင်သည်" }, { en: "Evolve", my: "တိုးတက်ပြောင်းလဲသည်" }, { en: "Exclude", my: "ချန်လှပ်သည်" }, { en: "Expose", my: "ဖော်ထုတ်သည်" }, { en: "Feature", my: "ထူးခြားချက်" }, { en: "Formulate", my: "ရေးဆွဲသည်" }, { en: "Imply", my: "ဆိုလိုသည်" }, { en: "Indicate", my: "ညွှန်ပြသည်" }, { en: "Modify", my: "ပြုပြင်ပြောင်းလဲသည်" }, { en: "Perceive", my: "ရိပ်မိသည်" }, { en: "Prohibit", my: "တားမြစ်သည်" }, { en: "Verify", my: "အတည်ပြုသည်" }
+            ],
+            'Day 9': [
+                { en: "Acquire", my: "ရယူသည်" }, { en: "Analyze", my: "ခွဲခြမ်းစိတ်ဖြာသည်" }, { en: "Approach", my: "ချဉ်းကပ်သည်" }, { en: "Challenge", my: "စိန်ခေါ်သည်" }, { en: "Conclude", my: "နိဂုံးချုပ်သည်" }, { en: "Create", my: "ဖန်တီးသည်" }, { en: "Determine", my: "ဆုံးဖြတ်သည်" }, { en: "Develop", my: "တိုးတက်အောင်လုပ်သည်" }, { en: "Discuss", my: "ဆွေးနွေးသည်" }, { en: "Evaluate", my: "အကဲဖြတ်သည်" }, { en: "Examine", my: "စစ်ဆေးသည်" }, { en: "Explore", my: "စူးစမ်းသည်" }, { en: "Formulate", my: "ရေးဆွဲသည်" }, { en: "Illustrate", my: "ဥပမာပြသည်" }, { en: "Interpret", my: "အဓိပ္ပာယ်ဖွင့်သည်" }, { en: "Investigate", my: "စုံစမ်းသည်" }, { en: "Outline", my: "အကြမ်းဖျဉ်းဖော်ပြသည်" }, { en: "Propose", my: "အဆိုပြုသည်" }, { en: "Suggest", my: "အကြံပြုသည်" }, { en: "Synthesize", my: "ပေါင်းစပ်သည်" }
+            ],
+            'Day 10': [
+                { en: "Abstract", my: "သီးခြား" }, { en: "Complex", my: "ရှုပ်ထွေးသော" }, { en: "Critical", my: "အရေးကြီးသော" }, { en: "Disparate", my: "ကွဲပြားသော" }, { en: "Empirical", my: "လက်တွေ့အထောက်အထားပေါ်မူတည်သော" }, { en: "Exemplary", my: "ထူးချွန်သော" }, { en: "Holistic", my: "ပြည့်စုံသော" }, { en: "Hypothetical", my: "ကြိုတင်ယူဆချက်ဖြစ်သော" }, { en: "Implicit", my: "ဖော်ပြထားခြင်းမရှိသော" }, { en: "Integral", my: "အဓိကကျသော" }, { en: "Intricate", my: "ရှုပ်ထွေးနက်နဲသော" }, { en: "Paradigm", my: "ပုံစံ" }, { en: "Prevalent", my: "အဖြစ်များသော" }, { en: "Profound", my: "နက်ရှိုင်းသော" }, { en: "Proponent", my: "ထောက်ခံသူ" }, { en: "Qualitative", my: "အရည်အသွေးပိုင်းဆိုင်ရာ" }, { en: "Quantitative", my: "အရေအတွက်ပိုင်းဆိုင်ရာ" }, { en: "Reciprocal", my: "အပြန်အလှန်" }, { en: "Vulnerable", my: "ထိခိုက်လွယ်သော" }, { en: "Substantiate", my: "သက်သေပြသည်" }
+            ],
+            'Day 11': [
+                { en: "Acknowledge", my: "အသိအမှတ်ပြုသည်" }, { en: "Advocate", my: "ထောက်ခံအားပေးသည်" }, { en: "Clarify", my: "ရှင်းလင်းသည်" }, { en: "Compile", my: "စုစည်းသည်" }, { en: "Concede", my: "ဝန်ခံသည်" }, { en: "Corroborate", my: "အတည်ပြုသည်" }, { en: "Debunk", my: "မှားယွင်းကြောင်းဖော်ထုတ်သည်" }, { en: "Derive", my: "ဆင်းသက်လာသည်" }, { en: "Dispute", my: "အငြင်းပွားသည်" }, { en: "Elucidate", my: "ထင်ရှားစေသည်" }, { en: "Endorse", my: "ထောက်ခံသည်" }, { en: "Extrapolate", my: "မှန်းဆသည်" }, { en: "Hypothesize", my: "ကြိုတင်ယူဆချက်ချသည်" }, { en: "Legitimize", my: "တရားဝင်ဖြစ်စေသည်" }, { en: "Mitigate", my: "လျှော့ချသည်" }, { en: "Nullify", my: "ပျက်ပြယ်စေသည်" }, { en: "Reiterate", my: "ထပ်ခါတလဲလဲပြောသည်" }, { en: "Refute", my: "ချေပသည်" }, { en: "Substantiate", my: "သက်သေပြသည်" }, { en: "Validate", my: "အတည်ပြုသည်" }
+            ],
+            'Day 12': [
+                { en: "Aesthetic", my: "အလှအပရေးရာ" }, { en: "Ambiguous", my: "မရှင်းလင်းသော" }, { en: "Analogous", my: "ဆင်တူသော" }, { en: "Compelling", my: "ဆွဲဆောင်မှုရှိသော" }, { en: "Conducive", my: "ဖြစ်စေနိုင်သော" }, { en: "Conformity", my: "လိုက်လျောညီထွေဖြစ်မှု" }, { en: "Definitive", my: "ပြတ်သားသော" }, { en: "Egregious", my: "ဆိုးရွားသော" }, { en: "Eminent", my: "ထင်ရှားသော" }, { en: "Ethical", my: "ကျင့်ဝတ်ဆိုင်ရာ" }, { en: "Exorbitant", my: "ဈေးနှုန်းအလွန်များသော" }, { en: "Inherent", my: "မွေးရာပါ" }, { en: "Mundane", my: "သာမန်၊ ရိုးရှင်းသော" }, { en: "Pragmatic", my: "လက်တွေ့ကျသော" }, { en: "Predominant", my: "လွှမ်းမိုးသော" }, { en: "Prejudicial", my: "ဘက်လိုက်သော" }, { en: "Plausible", my: "ဖြစ်နိုင်ချေရှိသော" }, { en: "Resilient", my: "ပြန်လည်ကောင်းမွန်လာနိုင်သော" }, { en: "Skepticism", my: "သံသယစိတ်" }, { en: "Venerable", my: "လေးစားထိုက်သော" }
+            ],
+            'Day 13': [
+                { en: "Allude", my: "ရည်ညွှန်းပြောဆိုသည်" }, { en: "Appertain", my: "သက်ဆိုင်သည်" }, { en: "Ascertain", my: "သေချာအောင်လုပ်သည်" }, { en: "Confound", my: "ရှုပ်ထွေးစေသည်" }, { en: "Conjecture", my: "မှန်းဆသည်" }, { en: "Contemplate", my: "စဉ်းစားဆင်ခြင်သည်" }, { en: "Correlate", my: "ဆက်စပ်မှုပြသည်" }, { en: "Demystify", my: "လျှို့ဝှက်ချက်ကိုဖော်ထုတ်သည်" }, { en: "Delineate", my: "ဖော်ပြသည်၊ ရှင်းပြသည်" }, { en: "Explicate", my: "အသေးစိတ်ရှင်းပြသည်" }, { en: "Formulate", my: "ပုံသေနည်းချသည်" }, { en: "Induce", my: "ဖြစ်စေသည်" }, { en: "Infer", my: "ကောက်ချက်ချသည်" }, { en: "Legislate", my: "ဥပဒေပြဋ္ဌာန်းသည်" }, { en: "Portray", my: "ပုံဖော်သည်" }, { en: "Preclude", my: "တားမြစ်သည်" }, { en: "Rebut", my: "ချေပသည်" }, { en: "Scrutinize", my: "စေ့စေ့စပ်စပ်စစ်ဆေးသည်" }, { en: "Stipulate", my: "သတ်မှတ်သည်" }, { en: "Undermine", my: "အားနည်းစေသည်" }
+            ],
+            'Day 14': [
+                { en: "Absurd", my: "ယုတ္တိမတန်သော" }, { en: "Ambivalent", my: "နှစ်ခွဖြစ်သော" }, { en: "Apathetic", my: "စိတ်မဝင်စားသော" }, { en: "Cohesive", my: "စည်းလုံးညီညွတ်သော" }, { en: "Concise", my: "အတိုချုပ်ပြီး ရှင်းလင်းသော" }, { en: "Cynical", my: "အရာရာကို အဆိုးမြင်သော" }, { en: "Discrepancy", my: "ကွာဟမှု" }, { en: "Egocentric", my: "အတ္တကြီးသော" }, { en: "Explicit", my: "ရှင်းလင်းပြတ်သားသော" }, { en: "Facet", my: "ဘက်အခြမ်း၊ ရှုထောင့်" }, { en: "Feasible", my: "ဖြစ်နိုင်ချေရှိသော" }, { en: "Idiosyncrasy", my: "ထူးခြားသော အလေ့အကျင့်" }, { en: "Incongruous", my: "မလိုက်ဖက်သော" }, { en: "Indispensable", my: "မဖြစ်မနေလိုအပ်သော" }, { en: "Ineffective", my: "ထိရောက်မှုမရှိသော" }, { en: "Innumerable", my: "ရေတွက်မရအောင်များပြားသော" }, { en: "Intangible", my: "ထိတွေ့မရသော" }, { en: "Nuance", my: "အသေးစိတ်ကွာခြားမှု" }, { en: "Orthodox", my: "ရိုးရာကိုလိုက်နာသော" }, { en: "Paradox", my: "ဆန့်ကျင်ဘက်ဖြစ်သော အဆို" }
+            ],
+            'Day 15': [
+                { en: "Abstract", my: "abstract" }, { en: "Adequate", my: "လုံလောက်သော" }, { en: "Ambiguous", my: "မရေရာသော" }, { en: "Analogy", my: "နှိုင်းယှဉ်ပြသခြင်း" }, { en: "Analyze", my: "ခွဲခြမ်းစိတ်ဖြာသည်" }, { en: "Argument", my: "အငြင်းပွားဖွယ်ရာအချက်" }, { en: "Bias", my: "ဘက်လိုက်မှု" }, { en: "Cohesive", my: "စည်းလုံးညီညွတ်သော" }, { en: "Conclude", my: "နိဂုံးချုပ်သည်" }, { en: "Criterion", my: "စံနှုန်း" }, { en: "Debate", my: "ဆွေးနွေးငြင်းခုံခြင်း" }, { en: "Define", my: "အဓိပ္ပာယ်ဖွင့်ဆိုသည်" }, { en: "Demonstrate", my: "သရုပ်ပြသည်" }, { en: "Elaborate", my: "အသေးစိတ်ဖော်ပြသည်" }, { en: "Evaluate", my: "အကဲဖြတ်သည်" }, { en: "Evidence", my: "သက်သေအထောက်အထား" }, { en: "Examine", my: "စစ်ဆေးသည်" }, { en: "Explain", my: "ရှင်းပြသည်" }, { en: "Hypothesis", my: "ကြိုတင်ယူဆချက်" }, { en: "Illustrate", my: "ပုံဥပမာဖြင့်ပြသည်" }
+            ],
+            'Day 16': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "This essay will explore...", my: "ဒီစာစီစာကုံးက...ကို လေ့လာမှာဖြစ်တယ်" }, { en: "It is often argued that...", my: "...လို့ မကြာခဏ ငြင်းခုံကြပါတယ်" }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "One major concern is that...", my: "အဓိကစိုးရိမ်စရာတစ်ခုကတော့..." }, { en: "A key advantage of... is that...", my: "...ရဲ့ အဓိကအားသာချက်ကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This can be seen in...", my: "ဒါက...မှာ တွေ့နိုင်ပါတယ်" }, { en: "In contrast, ...", my: "ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "Another viewpoint is that...", my: "နောက်ထပ်အမြင်တစ်ခုကတော့..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "Therefore, ...", my: "ဒါကြောင့်မို့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရရင်..." }, { en: "To sum up, ...", my: "အချုပ်အားဖြင့်ဆိုရရင်..." }, { en: "I believe that...", my: "ကျွန်တော်ယုံကြည်တာက..." }, { en: "It is important to consider...", my: "...ကို စဉ်းစားဖို့က အရေးကြီးတယ်" }, { en: "This highlights the fact that...", my: "ဒါက...ဆိုတဲ့ အချက်ကို ပေါ်လွင်စေတယ်" }, { en: "Despite the benefits, ...", my: "အကျိုးကျေးဇူးတွေရှိပေမယ့်လည်း..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }, { en: "The evidence suggests that...", my: "သက်သေအထောက်အထားတွေအရ..." }
+            ],
+            'Day 17': [
+                { en: "Abrogate", my: "ပယ်ဖျက်သည်" }, { en: "Accede", my: "လက်ခံသည်" }, { en: "Acquiesce", my: "လက်ခံသည်" }, { en: "Adjudicate", my: "ဆုံးဖြတ်သည်" }, { en: "Admonish", my: "ဆုံးမသည်" }, { en: "Amalgamate", my: "ပေါင်းစပ်သည်" }, { en: "Capitulate", my: "လက်နက်ချသည်" }, { en: "Censure", my: "ပြစ်တင်ရှုတ်ချသည်" }, { en: "Coalesce", my: "ပေါင်းစည်းသည်" }, { en: "Comport", my: "ပြုမူသည်" }, { en: "Concur", my: "သဘောတူသည်" }, { en: "Confound", my: "ရှုပ်ထွေးစေသည်" }, { en: "Convoluted", my: "ရှုပ်ထွေးလှသော" }, { en: "Deleterious", my: "အန္တရာယ်ဖြစ်စေသော" }, { en: "Delineate", my: "ဖော်ပြသည်" }, { en: "Dichotomy", my: "နှစ်ခြမ်းကွဲခြင်း" }, { en: "Dubious", my: "သံသယဖြစ်ဖွယ်" }, { en: "Enervate", my: "အားကုန်စေသည်" }, { en: "Equivocal", my: "နှစ်မျိုးအဓိပ္ပာယ်ရသော" }, { en: "Exacerbate", my: "ပိုဆိုးစေသည်" }
+            ],
+            'Day 18': [
+                { en: "Feasible", my: "ဖြစ်နိုင်သော" }, { en: "Imperative", my: "မဖြစ်မနေလိုအပ်သော" }, { en: "Impugn", my: "မေးခွန်းထုတ်သည်" }, { en: "Incessant", my: "ရပ်တန့်ခြင်းမရှိသော" }, { en: "Incongruous", my: "မလိုက်ဖက်သော" }, { en: "Indiscriminate", my: "အဆင်မခြင်" }, { en: "Inexorable", my: "မလွဲမသွေ" }, { en: "Ingratiate", my: "အကြိုက်ဆောင်သည်" }, { en: "Innate", my: "မွေးရာပါ" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intrepid", my: "ရဲရင့်သော" }, { en: "Juxtapose", my: "ယှဉ်တွဲပြသသည်" }, { en: "Laconic", my: "စကားနည်းသော" }, { en: "Malign", my: "ဆိုးဆိုးဝါးဝါးပြောသည်" }, { en: "Mitigate", my: "သက်သာစေသည်" }, { en: "Obfuscate", my: "ရှုပ်ထွေးစေသည်" }, { en: "Paradigm", my: "ပုံစံ" }, { en: "Pernicious", my: "အန္တရာယ်ကြီးမားသော" }, { en: "Pervasive", my: "ပျံ့နှံ့နေသော" }, { en: "Platitude", my: "အဓိပ္ပာယ်မရှိသောစကား" }
+            ],
+            'Day 19': [
+                { en: "Acquiesce", my: "ငြိမ်ခံသည်" }, { en: "Alleviate", my: "သက်သာစေသည်" }, { en: "Ameliorate", my: "ပိုကောင်းအောင်လုပ်သည်" }, { en: "Antipathy", my: "မုန်းတီးမှု" }, { en: "Apprehension", my: "စိုးရိမ်ပူပန်မှု" }, { en: "Benevolent", my: "စေတနာကောင်းသော" }, { en: "Circumvent", my: "ရှောင်ကွင်းသည်" }, { en: "Cliché", my: "ရိုးအီနေသောစကား" }, { en: "Culpable", my: "အပြစ်ရှိသော" }, { en: "Deference", my: "လေးစားမှု" }, { en: "Didactic", my: "ပညာပေးသော" }, { en: "Disseminate", my: "ဖြန့်ဝေသည်" }, { en: "Ephemeral", my: "ခဏတာ" }, { en: "Esoteric", my: "နက်နဲသော" }, { en: "Fallacious", my: "မှားယွင်းသော" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Gregarious", my: "ဖော်ရွေသော" }, { en: "Immutable", my: "မပြောင်းလဲနိုင်သော" }, { en: "Inadvertently", my: "မရည်ရွယ်ဘဲ" }, { en: "Inherent", my: "မွေးရာပါ" }
+            ],
+            'Day 20': [
+                { en: "Innate", my: "မွေးရာပါ" }, { en: "Mitigate", my: "လျှော့ချသည်" }, { en: "Mundane", my: "နေ့စဉ်ဘဝ" }, { en: "Obscure", my: "မရှင်းလင်းသော" }, { en: "Perfunctory", my: "ပေါ့ပေါ့တန်တန်လုပ်သော" }, { en: "Pernicious", my: "ဆိုးကျိုးဖြစ်စေသော" }, { en: "Profound", my: "နက်ရှိုင်းသော" }, { en: "Redundant", my: "ထပ်နေသော" }, { en: "Relegate", my: "နိမ့်ကျသောရာထူးသို့ပြောင်းသည်" }, { en: "Repudiate", my: "ငြင်းပယ်သည်" }, { en: "Resilient", my: "ပြန်လည်နာလန်ထူနိုင်သော" }, { en: "Retrospect", my: "နောက်ကြောင်းပြန်ကြည့်ခြင်း" }, { en: "Rhetoric", my: "စကားပြောအနုပညာ" }, { en: "Sanction", my: "ခွင့်ပြုချက်၊ အရေးယူမှု" }, { en: "Scrutinize", my: "စေ့စပ်စွာစစ်ဆေးသည်" }, { en: "Spurious", my: "အတုအယောင်" }, { en: "Stagnant", my: "ရပ်တန့်နေသော" }, { en: "Substantiate", my: "သက်သေပြသည်" }, { en: "Superfluous", my: "ပိုလျှံသော" }, { en: "Synthesize", my: "ပေါင်းစပ်သည်" }
+            ],
+            'Day 21': [
+                { en: "Adversary", my: "ရန်သူ" }, { en: "Altruistic", my: "သူတစ်ပါးကောင်းကျိုးဆောင်သော" }, { en: "Amorphous", my: "ပုံသဏ္ဍာန်မရှိသော" }, { en: "Animosity", my: "ရန်လိုမုန်းထားမှု" }, { en: "Antagonism", my: "ဆန့်ကျင်မှု" }, { en: "Apathy", my: "စိတ်မဝင်စားမှု" }, { en: "Censure", my: "ပြစ်တင်သည်" }, { en: "Clemency", my: "သနားကြင်နာမှု" }, { en: "Confound", my: "စိတ်ရှုပ်ထွေးစေသည်" }, { en: "Cynical", my: "အဆိုးမြင်သော" }, { en: "Derision", my: "လှောင်ပြောင်ခြင်း" }, { en: "Despotic", my: "အာဏာရှင်ဆန်သော" }, { en: "Diatribe", my: "ပြင်းထန်စွာဝေဖန်ခြင်း" }, { en: "Disdain", my: " contempt" }, { en: "Elucidate", my: "ရှင်းလင်းသည်" }, { en: "Enmity", my: "ရန်ငြိုး" }, { en: "Enumerate", my: "ရေတွက်သည်" }, { en: "Epitome", my: "အကောင်းဆုံးဥပမာ" }, { en: "Erudite", my: "ပညာတတ်သော" }, { en: "Exacerbate", my: "ပိုမိုဆိုးရွားစေသည်" }
+            ],
+            'Day 22': [
+                { en: "Felicitous", my: "သင့်လျော်သော" }, { en: "Furtive", my: "ခိုးကြောင်ခိုးဝှက်" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Gregarious", my: "လူမှုရေးကောင်းသော" }, { en: "Hegemony", my: "လွှမ်းမိုးမှု" }, { en: "Iconoclast", my: "ရိုးရာဖျက်ဆီးသူ" }, { en: "Idiosyncratic", my: "ထူးခြားသော" }, { en: "Immutable", my: "မပြောင်းလဲနိုင်သော" }, { en: "Impecunious", my: "ဆင်းရဲသော" }, { en: "Impregnable", my: "မဖျက်ဆီးနိုင်သော" }, { en: "Inchoate", my: "အစပြုသော" }, { en: "Incredulous", my: "မယုံကြည်နိုင်သော" }, { en: "Indefatigable", my: "မမောနိုင်မပန်းနိုင်" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intransigent", my: "မာကျောသော" }, { en: "Inveterate", my: "အမြစ်တွယ်နေသော" }, { en: "Jubilant", my: "ပျော်ရွှင်သော" }, { en: "Juggernaut", my: "မရပ်မနားကြီးမားသော" }, { en: "Lachrymose", my: "မျက်ရည်ကျလွယ်သော" }, { en: "Languid", my: "အားအင်မရှိသော" }
+            ],
+            'Day 23': [
+                { en: "Acumen", my: "ထိုးထွင်းဉာဏ်" }, { en: "Adept", my: "ကျွမ်းကျင်သော" }, { en: "Ameliorate", my: "တိုးတက်စေသည်" }, { en: "Belligerent", my: "ရန်လိုသော" }, { en: "Capricious", my: "စိတ်ကူးယဉ်ဆန်သော" }, { en: "Censure", my: "ပြစ်တင်ရှုတ်ချသည်" }, { en: "Clemency", my: "ကရုဏာ" }, { en: "Concur", my: "သဘောတူသည်" }, { en: "Conundrum", my: "ပဟေဠိ" }, { en: "Credulity", my: "အလွယ်တကူယုံကြည်ခြင်း" }, { en: "Deleterious", my: "အန္တရာယ်ဖြစ်စေသော" }, { en: "Disdain", my: " disdain" }, { en: "Ebullient", my: "စိတ်အားထက်သန်သော" }, { en: "Eclectic", my: "ရွေးချယ်ထားသော" }, { en: "Effervescent", my: "ပျော်ရွှင်သော" }, { en: "Egregious", my: "အလွန်ဆိုးရွားသော" }, { en: "Enervate", my: "အားနည်းစေသည်" }, { en: "Equivocate", my: "ရှောင်တိမ်းပြောဆိုသည်" }, { en: "Eschew", my: "ရှောင်ရှားသည်" }, { en: "Evanescent", my: "ပျောက်ကွယ်သွားသော" }
+            ],
+            'Day 24': [
+                { en: "Exonerate", my: "လွတ်မြောက်စေသည်" }, { en: "Extricate", my: "လွတ်မြောက်စေသည်" }, { en: "Fastidious", my: "အသေးစိတ်ကျသော" }, { en: "Fatuous", my: "မိုက်မဲသော" }, { en: "Florid", my: "ပန်းပွင့်သော" }, { en: "Furtive", my: "ခိုးကြောင်ခိုးဝှက်လုပ်သော" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Hackneyed", my: "ထပ်ခါတလဲလဲဖြစ်နေသော" }, { en: "Harangue", my: "ပြင်းပြင်းထန်ထန်ပြောဆိုသည်" }, { en: "Idyllic", my: "သာယာလှပသော" }, { en: "Ignominious", my: "ရှက်စရာကောင်းသော" }, { en: "Imminent", my: "ချက်ချင်းဖြစ်တော့မည့်" }, { en: "Impetuous", my: "စိတ်လိုက်မာန်ပါလုပ်သော" }, { en: "Incorrigible", my: "မပြုပြင်နိုင်သော" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intrepid", my: "ရဲရင့်သော" }, { en: "Jettison", my: "ပစ်ချသည်" }, { en: "Jubilant", my: "ပျော်ရွှင်သော" }, { en: "Juxtapose", my: "ယှဉ်တွဲသည်" }, { en: "Languid", my: "အားအင်မဲ့သော" }
+            ],
+            'Day 25': [
+                { en: "Alacrity", my: "လန်းဆန်းတက်ကြွမှု" }, { en: "Ameliorate", my: "ပိုကောင်းအောင်လုပ်သည်" }, { en: "Apathy", my: "စိတ်မပါဝင်စားမှု" }, { en: "Ascetic", my: "ရိုးရှင်းစွာနေထိုင်သော" }, { en: "Assuage", my: "သက်သာစေသည်" }, { en: "Blasé", my: "စိတ်မဝင်စားသော" }, { en: "Bombastic", my: "စကားကြွယ်သော" }, { en: "Cajole", my: "ချော့မော့သည်" }, { en: "Circumlocution", my: "ကွေ့ပတ်ပြောဆိုခြင်း" }, { en: "Coalesce", my: "ပေါင်းစည်းသည်" }, { en: "Conundrum", my: "ပဟေဠိ" }, { en: "Copious", my: "များပြားသော" }, { en: "Dilettante", my: "အပျော်တမ်းလုပ်သူ" }, { en: "Disparage", my: "အထင်သေးသည်" }, { en: "Efface", my: "ဖျက်ဆီးသည်" }, { en: "Ephemeral", my: "ခဏတာ" }, { en: "Esoteric", my: "လျှို့ဝှက်နက်နဲသော" }, { en: "Euphemism", my: "ယဉ်ကျေးစွာပြောဆိုခြင်း" }, { en: "Fabricate", my: "လုပ်ကြံသည်" }, { en: "Fatuous", my: "မိုက်မဲသော" }
+            ],
+            'Day 26': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "This essay will explore...", my: "ဒီစာစီစာကုံးက...ကို လေ့လာမှာဖြစ်တယ်" }, { en: "It is often argued that...", my: "...လို့ မကြာခဏ ငြင်းခုံကြပါတယ်" }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "One major concern is that...", my: "အဓိကစိုးရိမ်စရာတစ်ခုကတော့..." }, { en: "A key advantage of... is that...", my: "...ရဲ့ အဓိကအားသာချက်ကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This can be seen in...", my: "ဒါက...မှာ တွေ့နိုင်ပါတယ်" }, { en: "In contrast, ...", my: "ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "Another viewpoint is that...", my: "နောက်ထပ်အမြင်တစ်ခုကတော့..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "Therefore, ...", my: "ဒါကြောင့်မို့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရရင်..." }, { en: "To sum up, ...", my: "အချုပ်အားဖြင့်ဆိုရရင်..." }, { en: "I believe that...", my: "ကျွန်တော်ယုံကြည်တာက..." }, { en: "It is important to consider...", my: "...ကို စဉ်းစားဖို့က အရေးကြီးတယ်" }, { en: "This highlights the fact that...", my: "ဒါက...ဆိုတဲ့ အချက်ကို ပေါ်လွင်စေတယ်" }, { en: "Despite the benefits, ...", my: "အကျိုးကျေးဇူးတွေရှိပေမယ့်လည်း..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }, { en: "The evidence suggests that...", my: "သက်သေအထောက်အထားတွေအရ..." }
+            ],
+            'Day 27': [
+                { en: "Abhor", my: "ရွံရှာမုန်းတီးသည်" }, { en: "Accost", my: "စကားစပြောသည်" }, { en: "Aerate", my: "လေဝင်လေထွက်ကောင်းအောင်လုပ်သည်" }, { en: "Alleviate", my: "သက်သာစေသည်" }, { en: "Amplify", my: "ချဲ့ကားသည်" }, { en: "Aperture", my: "အပေါက်" }, { en: "Arduous", my: "ခက်ခဲကြမ်းတမ်းသော" }, { en: "Assuage", my: "သက်သာစေသည်" }, { en: "Avert", my: "ရှောင်ရှားသည်" }, { en: "Banal", my: "ရိုးရိုးသာမန်" }, { en: "Bifurcate", my: "နှစ်ခွကွဲသည်" }, { en: "Calibrate", my: "ချိန်ညှိသည်" }, { en: "Capitulate", my: "လက်နက်ချသည်" }, { en: "Celerity", my: "လျင်မြန်မှု" }, { en: "Confound", my: "ရှုပ်ထွေးစေသည်" }, { en: "Consummate", my: "ပြီးပြည့်စုံသော" }, { en: "Corroborate", my: "အတည်ပြုသည်" }, { en: "Debase", my: "တန်ဖိုးလျှော့ချသည်" }, { en: "Deleterious", my: "အန္တရာယ်ဖြစ်စေသော" }, { en: "Denounce", my: "ရှုတ်ချသည်" }
+            ],
+            'Day 28': [
+                { en: "Ephemeral", my: "ခဏတာ" }, { en: "Equanimity", my: "တည်ငြိမ်အေးချမ်းမှု" }, { en: "Eschew", my: "ရှောင်ရှားသည်" }, { en: "Exorbitant", my: "အလွန်အကျွံ" }, { en: "Expedite", my: "အရှိန်မြှင့်သည်" }, { en: "Extricate", my: "လွတ်မြောက်စေသည်" }, { en: "Fabricate", my: "လုပ်ကြံသည်" }, { en: "Fecund", my: "အသီးအပွင့်များသော" }, { en: "Fervent", my: "စိတ်အားထက်သန်သော" }, { en: "Formidable", my: "အထင်ကြီးစရာကောင်းသော" }, { en: "Futile", my: "အကျိုးမရှိသော" }, { en: "Goad", my: "လှုံ့ဆော်သည်" }, { en: "Gourmand", my: "အစားအသောက်ကြိုက်သူ" }, { en: "Haggard", my: "ပိန်ချုံးနေသော" }, { en: "Harbinger", my: "အနာဂတ်ကိုညွှန်ပြသူ" }, { en: "Hegemony", my: "လွှမ်းမိုးမှု" }, { en: "Iconoclast", my: "ရိုးရာကိုဖျက်ဆီးသူ" }, { en: "Idiosyncrasy", my: "ထူးခြားသောစရိုက်" }, { en: "Ignominious", my: "ရှက်စရာကောင်းသော" }, { en: "Impregnable", my: "မကျရှုံးနိုင်သော" }
+            ],
+            'Day 29': [
+                { en: "Inadvertent", my: "မရည်ရွယ်ဘဲ" }, { en: "Inchoate", my: "အစပြုသော" }, { en: "Incumbent", my: "တာဝန်ရှိသော" }, { en: "Indefatigable", my: "မမောမပန်းနိုင်သော" }, { en: "Indolent", my: "ပျင်းရိသော" }, { en: "Ingenuous", my: "ရိုးသားပွင့်လင်းသော" }, { en: "Inherent", my: "မွေးရာပါ" }, { en: "Innocuous", my: "အန္တရာယ်မရှိသော" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intrepid", my: "ရဲရင့်သော" }, { en: "Jocund", my: "ပျော်ရွှင်သော" }, { en: "Judicious", my: "ပညာရှိသော" }, { en: "Languid", my: "အားအင်မဲ့သော" }, { en: "Lassitude", my: "ပင်ပန်းနွမ်းနယ်မှု" }, { en: "Laud", my: "ချီးမွမ်းသည်" }, { en: "Levity", my: "ပေါ့ပေါ့တန်တန်" }, { en: "Listless", my: "စိတ်မပါလက်မပါ" }, { en: "Loquacious", my: "စကားများသော" }, { en: "Lucid", my: "ရှင်းလင်းသော" }, { en: "Lugubrious", my: "ဝမ်းနည်းဖွယ်" }
+            ],
+            'Day 30': [
+                { en: "Malleable", my: "ပုံသွင်းရလွယ်သော" }, { en: "Mendacious", my: "လိမ်လည်သော" }, { en: "Munificent", my: " ရက်ရောသော" }, { en: "Nebulous", my: "မှုန်ဝါးသော" }, { en: "Nefarious", my: "ဆိုးရွားသော" }, { en: "Novice", my: "အတွေ့အကြုံမရှိသူ" }, { en: "Obdurate", my: "ခေါင်းမာသော" }, { en: "Obfuscate", my: "ရှုပ်ထွေးစေသည်" }, { en: "Obstreperous", my: "ဆူညံသော" }, { en: "Onerous", my: "ဝန်ထုပ်ဝန်ပိုးဖြစ်သော" }, { en: "Opprobrious", my: "ပြစ်တင်ရှုတ်ချဖွယ်" }, { en: "Orthodox", my: "ရိုးရာကိုလိုက်နာသော" }, { en: "Ostensible", my: "ပေါ်လွင်သော" }, { en: "Palliative", my: "သက်သာစေသော" }, { en: "Pariah", my: "ပစ်ပယ်ခံရသူ" }, { en: "Parsimonious", my: "ချွေတာသော" }, { en: "Pellucid", my: "ရှင်းလင်းသော" }, { en: "Penchant", my: "နှစ်သက်မှု" }, { en: "Pernicious", my: "ဆိုးကျိုးဖြစ်စေသော" }, { en: "Pervasive", my: "ပျံ့နှံ့နေသော" }
+            ],
+            'Day 31': [
+                { en: "Abate", my: "လျော့ကျသည်" }, { en: "Accede", my: "သဘောတူသည်" }, { en: "Adjudicate", my: "ဆုံးဖြတ်ပေးသည်" }, { en: "Amalgamate", my: "ပေါင်းစည်းသည်" }, { en: "Ascertain", my: "အတည်ပြုသည်" }, { en: "Censure", my: "ပြစ်တင်သည်" }, { en: "Coalesce", my: "စုပေါင်းသည်" }, { en: "Concur", my: "သဘောထားတူသည်" }, { en: "Confound", my: "ရှုပ်ထွေးသည်" }, { en: "Corroborate", my: "ထောက်ခံသည်" }, { en: "Delineate", my: "အကျဉ်းချုပ်ဖော်ပြသည်" }, { en: "Denounce", my: "ပြစ်တင်ရှုတ်ချသည်" }, { en: "Deride", my: "လှောင်ပြောင်သည်" }, { en: "Desecrate", my: "ညစ်ညမ်းစေသည်" }, { en: "Dilapidated", my: "ပျက်စီးနေသော" }, { en: "Disavow", my: "ငြင်းဆိုသည်" }, { en: "Disconcert", my: "စိတ်အနှောင့်အယှက်ဖြစ်စေသည်" }, { en: "Disseminate", my: "ဖြန့်ချိသည်" }, { en: "Dissuade", my: "တားမြစ်သည်" }, { en: "Divulge", my: "ထုတ်ဖော်သည်" }
+            ],
+            'Day 32': [
+                { en: "Elicit", my: "ရယူသည်" }, { en: "Embellish", my: "အလှဆင်သည်" }, { en: "Eminent", my: "ထင်ရှားသော" }, { en: "Enervate", my: "အားကုန်သည်" }, { en: "Equivocate", my: "ရှောင်တိမ်းသည်" }, { en: "Exacerbate", my: "ပိုဆိုးစေသည်" }, { en: "Exonerate", my: "လွတ်မြောက်စေသည်" }, { en: "Expedite", my: "မြန်စေသည်" }, { en: "Expunge", my: "ဖျက်ပစ်သည်" }, { en: "Extol", my: "ချီးမွမ်းသည်" }, { en: "Extricate", my: "ရုန်းထွက်သည်" }, { en: "Fabricate", my: "လုပ်ကြံသည်" }, { en: "Facetious", my: "ဟာသပြောသော" }, { en: "Fallacious", my: "မှားယွင်းသော" }, { en: "Foment", my: "လှုံ့ဆော်သည်" }, { en: "Forgo", my: "စွန့်လွှတ်သည်" }, { en: "Furtive", my: "လျှို့ဝှက်သော" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Harangue", my: "ပြင်းထန်စွာပြောသည်" }, { en: "Hedonism", my: "ပျော်ရွှင်မှုရှာဖွေခြင်း" }
+            ],
+            'Day 33': [
+                { en: "Iconoclast", my: "ရိုးရာကို ဆန့်ကျင်သူ" }, { en: "Idolatry", my: "ရုပ်တုကိုးကွယ်မှု" }, { en: "Ignominious", my: "ရှက်စရာကောင်းသော" }, { en: "Immutable", my: "မပြောင်းလဲသော" }, { en: "Impervious", my: "မထိခိုက်နိုင်သော" }, { en: "Impugn", my: "မေးခွန်းထုတ်သည်" }, { en: "Inchoate", my: "အစပြုသော" }, { en: "Incredulous", my: "မယုံကြည်နိုင်သော" }, { en: "Indefatigable", my: "မမောနိုင်မပန်းနိုင်" }, { en: "Indolent", my: "ပျင်းရိသော" }, { en: "Innate", my: "မွေးရာပါ" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intransigent", my: "ခေါင်းမာသော" }, { en: "Inveterate", my: "အမြစ်တွယ်နေသော" }, { en: "Jettison", my: "ပစ်ချသည်" }, { en: "Jocund", my: "ပျော်ရွှင်သော" }, { en: "Judicious", my: "ပညာရှိသော" }, { en: "Languid", my: "အားအင်မရှိသော" }, { en: "Lassitude", my: "ပင်ပန်းနွမ်းနယ်မှု" }, { en: "Laud", my: "ချီးမွမ်းသည်" }
+            ],
+            'Day 34': [
+                { en: "Levity", my: "ပေါ့ပေါ့တန်တန်" }, { en: "Listless", my: "စိတ်မပါလက်မပါ" }, { en: "Loquacious", my: "စကားများသော" }, { en: "Lucid", my: "ရှင်းလင်းသော" }, { en: "Lugubrious", my: "ဝမ်းနည်းသော" }, { en: "Malleable", my: "ပုံသွင်းရလွယ်သော" }, { en: "Mendacious", my: "လိမ်လည်သော" }, { en: "Mitigate", my: "သက်သာစေသည်" }, { en: "Munificent", my: "ရက်ရောသော" }, { en: "Nebulous", my: "မှုန်ဝါးသော" }, { en: "Nefarious", my: "ဆိုးရွားသော" }, { en: "Novice", my: "အတွေ့အကြုံမရှိသူ" }, { en: "Obdurate", my: "ခေါင်းမာသော" }, { en: "Obfuscate", my: "ရှုပ်ထွေးစေသည်" }, { en: "Obstreperous", my: "ဆူညံသော" }, { en: "Onerous", my: "ဝန်ထုပ်ဝန်ပိုးဖြစ်သော" }, { en: "Opprobrious", my: "ပြစ်တင်ရှုတ်ချဖွယ်" }, { en: "Orthodox", my: "ရိုးရာကိုလိုက်နာသော" }, { en: "Ostensible", my: "ပေါ်လွင်သော" }, { en: "Palliative", my: "သက်သာစေသော" }
+            ],
+            'Day 35': [
+                { en: "Paradigm", my: "ပုံစံ" }, { en: "Pariah", my: "ပစ်ပယ်ခံရသူ" }, { en: "Parsimonious", my: "ချွေတာသော" }, { en: "Pellucid", my: "ရှင်းလင်းသော" }, { en: "Penchant", my: "နှစ်သက်မှု" }, { en: "Perfunctory", my: "ပေါ့ပေါ့တန်တန်လုပ်သော" }, { en: "Pernicious", my: "ဆိုးကျိုးဖြစ်စေသော" }, { en: "Pervasive", my: "ပျံ့နှံ့နေသော" }, { en: "Platitude", my: "အဓိပ္ပာယ်မရှိသောစကား" }, { en: "Plethora", my: "များပြားမှု" }, { en: "Profligate", my: "ဖြုန်းတီးသော" }, { en: "Profound", my: "နက်ရှိုင်းသော" }, { en: "Propagate", my: "ဖြန့်သည်" }, { en: "Propensity", my: "သဘောထား" }, { en: "Pugnacious", my: "ရန်လိုသော" }, { en: "Puissant", my: "စွမ်းအားကြီးသော" }, { en: "Querulous", my: "ညည်းညူသော" }, { en: "Quotidian", my: "နေ့စဉ်" }, { en: "Recalcitrant", my: "ခေါင်းမာသော" }, { en: "Recant", my: "စကားရုပ်သိမ်းသည်" }
+            ],
+            'Day 36': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "This essay will explore...", my: "ဒီစာစီစာကုံးက...ကို လေ့လာမှာဖြစ်တယ်" }, { en: "It is often argued that...", my: "...လို့ မကြာခဏ ငြင်းခုံကြပါတယ်" }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "One major concern is that...", my: "အဓိကစိုးရိမ်စရာတစ်ခုကတော့..." }, { en: "A key advantage of... is that...", my: "...ရဲ့ အဓိကအားသာချက်ကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This can be seen in...", my: "ဒါက...မှာ တွေ့နိုင်ပါတယ်" }, { en: "In contrast, ...", my: "ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "Another viewpoint is that...", my: "နောက်ထပ်အမြင်တစ်ခုကတော့..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "Therefore, ...", my: "ဒါကြောင့်မို့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရရင်..." }, { en: "To sum up, ...", my: "အချုပ်အားဖြင့်ဆိုရရင်..." }, { en: "I believe that...", my: "ကျွန်တော်ယုံကြည်တာက..." }, { en: "It is important to consider...", my: "...ကို စဉ်းစားဖို့က အရေးကြီးတယ်" }, { en: "This highlights the fact that...", my: "ဒါက...ဆိုတဲ့ အချက်ကို ပေါ်လွင်စေတယ်" }, { en: "Despite the benefits, ...", my: "အကျိုးကျေးဇူးတွေရှိပေမယ့်လည်း..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }, { en: "The evidence suggests that...", my: "သက်သေအထောက်အထားတွေအရ..." }
+            ],
+            'Day 37': [
+                { en: "Adulation", my: "ချီးမွမ်းမြှောက်ပင့်ခြင်း" }, { en: "Alacrity", my: "လျင်မြန်သွက်လက်မှု" }, { en: "Albeit", my: "ဖြစ်လင့်ကစား" }, { en: "Amalgamate", my: "ပေါင်းစပ်သည်" }, { en: "Ambivalent", my: "နှစ်ခွဖြစ်သော" }, { en: "Ameliorate", my: "တိုးတက်စေသည်" }, { en: "Anachronistic", my: "ခေတ်နောက်ကျသော" }, { en: "Animosity", my: "ရန်လိုမုန်းထားမှု" }, { en: "Antagonistic", my: "ဆန့်ကျင်သော" }, { en: "Apathy", my: "စိတ်မပါဝင်စားမှု" }, { en: "Approbation", my: "ခွင့်ပြုချက်" }, { en: "Arcane", my: "လျှို့ဝှက်နက်နဲသော" }, { en: "Assuage", my: "သက်သာစေသည်" }, { en: "Auspicious", my: "ကောင်းမွန်သော" }, { en: "Banal", my: "ရိုးရိုးသာမန်" }, { en: "Belligerent", my: "ရန်လိုသော" }, { en: "Benign", my: "အန္တရာယ်မရှိသော" }, { en: "Blatant", my: "ထင်ရှားသော" }, { en: "Cadence", my: "စကားပြောသံ၏ အတက်အကျ" }, { en: "Cajole", my: "ချော့မော့သည်" }
+            ],
+            'Day 38': [
+                { en: "Capricious", my: "စိတ်ကူးယဉ်ဆန်သော" }, { en: "Cavalier", my: "ပေါ့ပေါ့ဆဆ" }, { en: "Censure", my: "ပြစ်တင်သည်" }, { en: "Coalesce", my: "ပေါင်းစည်းသည်" }, { en: "Concise", my: "အတိုချုပ်" }, { en: "Conundrum", my: "ပဟေဠိ" }, { en: "Corporeal", my: "ရုပ်ပိုင်းဆိုင်ရာ" }, { en: "Deleterious", my: "အန္တရာယ်ဖြစ်စေသော" }, { en: "Didactic", my: "ပညာပေးသော" }, { en: "Dilettante", my: "အပျော်တမ်းလုပ်သူ" }, { en: "Disparate", my: "ကွဲပြားသော" }, { en: "Disseminate", my: "ဖြန့်ဝေသည်" }, { en: "Dogmatic", my: "အစွဲအလမ်းကြီးသော" }, { en: "Dubious", my: "သံသယဖြစ်ဖွယ်" }, { en: "Ebullient", my: "စိတ်အားထက်သန်သော" }, { en: "Egregious", my: "ဆိုးရွားသော" }, { en: "Enervate", my: "အားနည်းစေသည်" }, { en: "Ephemeral", my: "ခဏတာ" }, { en: "Equivocal", my: "နှစ်မျိုးအဓိပ္ပာယ်ရသော" }, { en: "Eschew", my: "ရှောင်ရှားသည်" }
+            ],
+            'Day 39': [
+                { en: "Exacerbate", my: "ပိုမိုဆိုးရွားစေသည်" }, { en: "Exonerate", my: "လွတ်မြောက်စေသည်" }, { en: "Extirpate", my: "အမြစ်ပြတ်ဖျက်ဆီးသည်" }, { en: "Fabricate", my: "လုပ်ကြံသည်" }, { en: "Facetious", my: "ဟာသပြောသော" }, { en: "Fatuous", my: "မိုက်မဲသော" }, { en: "Felicitous", my: "သင့်တော်သော" }, { en: "Furtive", my: "ခိုးကြောင်ခိုးဝှက်" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Gregarious", my: "လူမှုရေးကောင်းသော" }, { en: "Hackneyed", my: "ထပ်ခါတလဲလဲဖြစ်နေသော" }, { en: "Harangue", my: "ပြင်းပြင်းထန်ထန်ပြောဆိုသည်" }, { en: "Hegemony", my: "လွှမ်းမိုးမှု" }, { en: "Iconoclast", my: "ရိုးရာဖျက်ဆီးသူ" }, { en: "Idyllic", my: "သာယာလှပသော" }, { en: "Ignominious", my: "ရှက်စရာကောင်းသော" }, { en: "Imminent", my: "ချက်ချင်းဖြစ်တော့မည့်" }, { en: "Impetuous", my: "စိတ်လိုက်မာန်ပါလုပ်သော" }, { en: "Inchoate", my: "အစပြုသော" }, { en: "Incongruous", my: "မလိုက်ဖက်သော" }
+            ],
+            'Day 40': [
+                { en: "Incorrigible", my: "မပြုပြင်နိုင်သော" }, { en: "Incredulous", my: "မယုံကြည်နိုင်သော" }, { en: "Indefatigable", my: "မမောနိုင်မပန်းနိုင်" }, { en: "Indolent", my: "ပျင်းရိသော" }, { en: "Ineffable", my: "မဖော်ပြနိုင်သော" }, { en: "Ingenuous", my: "ရိုးသားပွင့်လင်းသော" }, { en: "Inherent", my: "မွေးရာပါ" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intransigent", my: "ခေါင်းမာသော" }, { en: "Inveterate", my: "အမြစ်တွယ်နေသော" }, { en: "Jettison", my: "ပစ်ချသည်" }, { en: "Jocund", my: "ပျော်ရွှင်သော" }, { en: "Judicious", my: "ပညာရှိသော" }, { en: "Juxtapose", my: "ယှဉ်တွဲသည်" }, { en: "Laconic", my: "စကားနည်းသော" }, { en: "Languid", my: "အားအင်မဲ့သော" }, { en: "Lassitude", my: "ပင်ပန်းနွမ်းနယ်မှု" }, { en: "Laud", my: "ချီးမွမ်းသည်" }, { en: "Levity", my: "ပေါ့ပေါ့တန်တန်" }, { en: "Listless", my: "စိတ်မပါလက်မပါ" }
+            ],
+            'Day 41': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "This essay will explore...", my: "ဒီစာစီစာကုံးက...ကို လေ့လာမှာဖြစ်တယ်" }, { en: "It is often argued that...", my: "...လို့ မကြာခဏ ငြင်းခုံကြပါတယ်" }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "One major concern is that...", my: "အဓိကစိုးရိမ်စရာတစ်ခုကတော့..." }, { en: "A key advantage of... is that...", my: "...ရဲ့ အဓိကအားသာချက်ကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This can be seen in...", my: "ဒါက...မှာ တွေ့နိုင်ပါတယ်" }, { en: "In contrast, ...", my: "ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "Another viewpoint is that...", my: "နောက်ထပ်အမြင်တစ်ခုကတော့..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "Therefore, ...", my: "ဒါကြောင့်မို့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရရင်..." }, { en: "To sum up, ...", my: "အချုပ်အားဖြင့်ဆိုရရင်..." }, { en: "I believe that...", my: "ကျွန်တော်ယုံကြည်တာက..." }, { en: "It is important to consider...", my: "...ကို စဉ်းစားဖို့က အရေးကြီးတယ်" }, { en: "This highlights the fact that...", my: "ဒါက...ဆိုတဲ့ အချက်ကို ပေါ်လွင်စေတယ်" }, { en: "Despite the benefits, ...", my: "အကျိုးကျေးဇူးတွေရှိပေမယ့်လည်း..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }, { en: "The evidence suggests that...", my: "သက်သေအထောက်အထားတွေအရ..." }
+            ],
+            'Day 42': [
+                { en: "Loquacious", my: "စကားများသော" }, { en: "Lucid", my: "ရှင်းလင်းသော" }, { en: "Lugubrious", my: "ဝမ်းနည်းသော" }, { en: "Malleable", my: "ပုံသွင်းရလွယ်သော" }, { en: "Mendacious", my: "လိမ်လည်သော" }, { en: "Munificent", my: " ရက်ရောသော" }, { en: "Nebulous", my: "မှုန်ဝါးသော" }, { en: "Nefarious", my: "ဆိုးရွားသော" }, { en: "Novice", my: "အတွေ့အကြုံမရှိသူ" }, { en: "Obdurate", my: "ခေါင်းမာသော" }, { en: "Obfuscate", my: "ရှုပ်ထွေးစေသည်" }, { en: "Obstreperous", my: "ဆူညံသော" }, { en: "Onerous", my: "ဝန်ထုပ်ဝန်ပိုးဖြစ်သော" }, { en: "Opprobrious", my: "ပြစ်တင်ရှုတ်ချဖွယ်" }, { en: "Orthodox", my: "ရိုးရာကိုလိုက်နာသော" }, { en: "Ostensible", my: "ပေါ်လွင်သော" }, { en: "Palliative", my: "သက်သာစေသော" }, { en: "Pariah", my: "ပစ်ပယ်ခံရသူ" }, { en: "Parsimonious", my: "ချွေတာသော" }, { en: "Pellucid", my: "ရှင်းလင်းသော" }
+            ],
+            'Day 43': [
+                { en: "Penchant", my: "နှစ်သက်မှု" }, { en: "Perfunctory", my: "ပေါ့ပေါ့တန်တန်လုပ်သော" }, { en: "Pernicious", my: "ဆိုးကျိုးဖြစ်စေသော" }, { en: "Pervasive", my: "ပျံ့နှံ့နေသော" }, { en: "Platitude", my: "အဓိပ္ပာယ်မရှိသောစကား" }, { en: "Plethora", my: "များပြားမှု" }, { en: "Profligate", my: "ဖြုန်းတီးသော" }, { en: "Profound", my: "နက်ရှိုင်းသော" }, { en: "Propagate", my: "ဖြန့်သည်" }, { en: "Propensity", my: "သဘောထား" }, { en: "Pugnacious", my: "ရန်လိုသော" }, { en: "Puissant", my: "စွမ်းအားကြီးသော" }, { en: "Querulous", my: "ညည်းညူသော" }, { en: "Quotidian", my: "နေ့စဉ်" }, { en: "Recalcitrant", my: "ခေါင်းမာသော" }, { en: "Recant", my: "စကားရုပ်သိမ်းသည်" }, { en: "Recapitulate", my: "အကျဉ်းချုပ်ပြောသည်" }, { en: "Recondite", my: "နားလည်ရခက်သော" }, { en: "Refulgent", my: "တောက်ပသော" }, { en: "Repudiate", my: "ငြင်းပယ်သည်" }
+            ],
+            'Day 44': [
+                { en: "Rescind", my: "ဖျက်သိမ်းသည်" }, { en: "Salient", my: "အထင်ကရ" }, { en: "Sanction", my: "ခွင့်ပြုချက်" }, { en: "Sardonic", my: "ကဲ့ရဲ့သော" }, { en: "Scintillating", my: "တောက်ပသော" }, { en: "Scrutinize", my: "စစ်ဆေးသည်" }, { en: "Solipsism", my: "ကိုယ့်ကိုယ်ကိုယ်သာအရေးကြီးသည်ဟုယူဆခြင်း" }, { en: "Spurious", my: "အတုအယောင်" }, { en: "Stagnant", my: "ရပ်တန့်သော" }, { en: "Staid", my: "တည်ငြိမ်သော" }, { en: "Stentorian", my: "ကျယ်လောင်သော" }, { en: "Subterfuge", my: "လှည့်စားမှု" }, { en: "Supercilious", my: "မာနကြီးသော" }, { en: "Superfluous", my: "ပိုလျှံသော" }, { en: "Surreptitious", my: "လျှို့ဝှက်သော" }, { en: "Sybarite", my: "အပျော်အပါးလိုက်စားသူ" }, { en: "Tacit", my: "မပြောဘဲနားလည်သော" }, { en: "Tawdry", my: "တန်ဖိုးနည်းသော" }, { en: "Tenable", my: "ဆင်ခြင်တုံတရားရှိသော" }, { en: "Tenuous", my: "အားနည်းသော" }
+            ],
+            'Day 45': [
+                { en: "Transient", my: "ခဏတာ" }, { en: "Trepidation", my: "စိုးရိမ်မှု" }, { en: "Trite", my: "ရိုးအီနေသော" }, { en: "Truncate", my: "ဖြတ်တောက်သည်" }, { en: "Turgid", my: "ရောင်ရမ်းသော" }, { en: "Turpitude", my: "ယုတ်မာမှု" }, { en: "Ubiquitous", my: "နေရာတိုင်းရှိသော" }, { en: "Undermine", my: "အားနည်းစေသည်" }, { en: "Unilateral", my: "တစ်ဖက်သတ်" }, { en: "Unmitigated", my: "မလျှော့ပါးသော" }, { en: "Unwieldy", my: "ကိုင်တွယ်ရခက်သော" }, { en: "Vacillate", my: "တုံ့ဆိုင်းသည်" }, { en: "Vapid", my: "စိတ်ဝင်စားစရာမကောင်းသော" }, { en: "Vehement", my: "ပြင်းပြသော" }, { en: "Venerate", my: "ရိုသေသည်" }, { en: "Veracity", my: "အမှန်တရား" }, { en: "Verbose", my: "စကားများသော" }, { en: "Viable", my: "ဖြစ်နိုင်ချေရှိသော" }, { en: "Vilify", my: "အသရေဖျက်သည်" }, { en: "Vituperate", my: "ဆဲဆိုသည်" }
+            ],
+            'Day 46': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "This essay will explore...", my: "ဒီစာစီစာကုံးက...ကို လေ့လာမှာဖြစ်တယ်" }, { en: "It is often argued that...", my: "...လို့ မကြာခဏ ငြင်းခုံကြပါတယ်" }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "One major concern is that...", my: "အဓိကစိုးရိမ်စရာတစ်ခုကတော့..." }, { en: "A key advantage of... is that...", my: "...ရဲ့ အဓိကအားသာချက်ကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This can be seen in...", my: "ဒါက...မှာ တွေ့နိုင်ပါတယ်" }, { en: "In contrast, ...", my: "ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "Another viewpoint is that...", my: "နောက်ထပ်အမြင်တစ်ခုကတော့..." }, { en: "Consequently, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "Therefore, ...", my: "ဒါကြောင့်မို့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရရင်..." }, { en: "To sum up, ...", my: "အချုပ်အားဖြင့်ဆိုရရင်..." }, { en: "I believe that...", my: "ကျွန်တော်ယုံကြည်တာက..." }, { en: "It is important to consider...", my: "...ကို စဉ်းစားဖို့က အရေးကြီးတယ်" }, { en: "This highlights the fact that...", my: "ဒါက...ဆိုတဲ့ အချက်ကို ပေါ်လွင်စေတယ်" }, { en: "Despite the benefits, ...", my: "အကျိုးကျေးဇူးတွေရှိပေမယ့်လည်း..." }, { en: "On the other hand, ...", my: "အခြားတစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }, { en: "The evidence suggests that...", my: "သက်သေအထောက်အထားတွေအရ..." }
+            ],
+            'Day 47': [
+                { en: "Acquiesce", my: "လက်ခံသည်" }, { en: "Ameliorate", my: "ပိုကောင်းအောင်လုပ်သည်" }, { en: "Apathy", my: "စိတ်မပါဝင်စားမှု" }, { en: "Ascetic", my: "ရိုးရှင်းစွာနေထိုင်သော" }, { en: "Assuage", my: "သက်သာစေသည်" }, { en: "Blasé", my: "စိတ်မဝင်စားသော" }, { en: "Bombastic", my: "စကားကြွယ်သော" }, { en: "Cajole", my: "ချော့မော့သည်" }, { en: "Circumlocution", my: "ကွေ့ပတ်ပြောဆိုခြင်း" }, { en: "Coalesce", my: "ပေါင်းစည်းသည်" }, { en: "Conundrum", my: "ပဟေဠိ" }, { en: "Copious", my: "များပြားသော" }, { en: "Dilettante", my: "အပျော်တမ်းလုပ်သူ" }, { en: "Disparage", my: "အထင်သေးသည်" }, { en: "Efface", my: "ဖျက်ဆီးသည်" }, { en: "Ephemeral", my: "ခဏတာ" }, { en: "Esoteric", my: "လျှို့ဝှက်နက်နဲသော" }, { en: "Euphemism", my: "ယဉ်ကျေးစွာပြောဆိုခြင်း" }, { en: "Fabricate", my: "လုပ်ကြံသည်" }, { en: "Fatuous", my: "မိုက်မဲသော" }
+            ],
+            'Day 48': [
+                { en: "Felicitous", my: "သင့်လျော်သော" }, { en: "Furtive", my: "ခိုးကြောင်ခိုးဝှက်" }, { en: "Garrulous", my: "စကားများသော" }, { en: "Gregarious", my: "လူမှုရေးကောင်းသော" }, { en: "Hegemony", my: "လွှမ်းမိုးမှု" }, { en: "Iconoclast", my: "ရိုးရာကိုဖျက်ဆီးသူ" }, { en: "Idiosyncratic", my: "ထူးခြားသော" }, { en: "Immutable", my: "မပြောင်းလဲနိုင်သော" }, { en: "Impecunious", my: "ဆင်းရဲသော" }, { en: "Impregnable", my: "မဖျက်ဆီးနိုင်သော" }, { en: "Inchoate", my: "အစပြုသော" }, { en: "Incredulous", my: "မယုံကြည်နိုင်သော" }, { en: "Indefatigable", my: "မမောနိုင်မပန်းနိုင်" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intransigent", my: "မာကျောသော" }, { en: "Inveterate", my: "အမြစ်တွယ်နေသော" }, { en: "Jubilant", my: "ပျော်ရွှင်သော" }, { en: "Juggernaut", my: "မရပ်မနားကြီးမားသော" }, { en: "Lachrymose", my: "မျက်ရည်ကျလွယ်သော" }, { en: "Languid", my: "အားအင်မရှိသော" }
+            ],
+            'Day 49': [
+                { en: "Abrogate", my: "ပယ်ဖျက်သည်" }, { en: "Accede", my: "လက်ခံသည်" }, { en: "Acquiesce", my: "လက်ခံသည်" }, { en: "Adjudicate", my: "ဆုံးဖြတ်သည်" }, { en: "Admonish", my: "ဆုံးမသည်" }, { en: "Amalgamate", my: "ပေါင်းစပ်သည်" }, { en: "Capitulate", my: "လက်နက်ချသည်" }, { en: "Censure", my: "ပြစ်တင်ရှုတ်ချသည်" }, { en: "Coalesce", my: "ပေါင်းစည်းသည်" }, { en: "Comport", my: "ပြုမူသည်" }, { en: "Concur", my: "သဘောတူသည်" }, { en: "Confound", my: "ရှုပ်ထွေးစေသည်" }, { en: "Convoluted", my: "ရှုပ်ထွေးလှသော" }, { en: "Deleterious", my: "အန္တရာယ်ဖြစ်စေသော" }, { en: "Delineate", my: "ဖော်ပြသည်" }, { en: "Dichotomy", my: "နှစ်ခြမ်းကွဲခြင်း" }, { en: "Dubious", my: "သံသယဖြစ်ဖွယ်" }, { en: "Enervate", my: "အားကုန်စေသည်" }, { en: "Equivocal", my: "နှစ်မျိုးအဓိပ္ပာယ်ရသော" }, { en: "Exacerbate", my: "ပိုဆိုးစေသည်" }
+            ],
+            'Day 50': [
+                { en: "Feasible", my: "ဖြစ်နိုင်သော" }, { en: "Imperative", my: "မဖြစ်မနေလိုအပ်သော" }, { en: "Impugn", my: "မေးခွန်းထုတ်သည်" }, { en: "Incessant", my: "ရပ်တန့်ခြင်းမရှိသော" }, { en: "Incongruous", my: "မလိုက်ဖက်သော" }, { en: "Indiscriminate", my: "အဆင်မခြင်" }, { en: "Inexorable", my: "မလွဲမသွေ" }, { en: "Ingratiate", my: "အကြိုက်ဆောင်သည်" }, { en: "Innate", my: "မွေးရာပါ" }, { en: "Insipid", my: "အရသာမရှိသော" }, { en: "Intrepid", my: "ရဲရင့်သော" }, { en: "Juxtapose", my: "ယှဉ်တွဲပြသသည်" }, { en: "Laconic", my: "စကားနည်းသော" }, { en: "Malign", my: "ဆိုးဆိုးဝါးဝါးပြောသည်" }, { en: "Mitigate", my: "သက်သာစေသည်" }, { en: "Obfuscate", my: "ရှုပ်ထွေးစေသည်" }, { en: "Paradigm", my: "ပုံစံ" }, { en: "Pernicious", my: "အန္တရာယ်ကြီးမားသော" }, { en: "Pervasive", my: "ပျံ့နှံ့နေသော" }, { en: "Platitude", my: "အဓိပ္ပာယ်မရှိသောစကား" }
+            ]
+        };
+
+        const allPhraseData = {
+            'Day 1': [
+                { en: "In my opinion, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }, { en: "To begin with, ...", my: "စတင်ရမယ်ဆိုရင်တော့..." }, { en: "On the one hand, ...", my: "တစ်ဖက်ကကြည့်မယ်ဆိုရင်..." }
+            ],
+            'Day 2': [
+                { en: "It is widely believed that...", my: "ကျယ်ကျယ်ပြန့်ပြန့်ယုံကြည်ထားတာကတော့..." }, { en: "For example, ...", my: "ဥပမာအားဖြင့်..." }, { en: "As a result, ...", my: "ရလဒ်အနေနဲ့..." }
+            ],
+            'Day 3': [
+                { en: "It is worth noting that...", my: "မှတ်သားထိုက်တာကတော့..." }, { en: "In conclusion, ...", my: "နိဂုံးချုပ်ရမယ်ဆိုရင်တော့..." }, { en: "Therefore, ...", my: "ထို့ကြောင့်..." }
+            ],
+            // Day 4 to Day 50
+            'Day 4': [
+                { en: "It is widely held that...", my: "အများစုကတော့ ယုံကြည်ထားတာက..." }, { en: "To illustrate this point, ...", my: "ဒီအချက်ကို ဥပမာပြရရင်တော့..." }, { en: "One major consequence is that...", my: "အဓိကအကျိုးဆက်တစ်ခုကတော့..." }
+            ],
+            'Day 5': [
+                { en: "This highlights the importance of...", my: "ဒါကတော့...ရဲ့ အရေးပါမှုကို ပေါ်လွင်စေပါတယ်" }, { en: "In light of this, ...", my: "ဒီအချက်ကို ထောက်ရှုပြီးကြည့်မယ်ဆိုရင်..." }, { en: "A key distinction between... is...", my: "...ကြားက အဓိကကွာခြားချက်ကတော့..." }
+            ],
+            'Day 6': [
+                { en: "It is argued that...", my: "...လို့ ငြင်းခုံကြပါတယ်" }, { en: "For instance, ...", my: "ဥပမာအားဖြင့်..." }, { en: "This leads to the conclusion that...", my: "ဒါကြောင့် နိဂုံးချုပ်ရရင်တော့..." }
+            ],
+            'Day 7': [
+                { en: "The main reason for this is...", my: "ဒီလိုဖြစ်ရတဲ့ အဓိကအကြောင်းရင်းကတော့..." }, { en: "In essence, ...", my: "အနှစ်ချုပ်အားဖြင့်တော့..." }, { en: "As a general rule, ...", my: "ယေဘုယျအားဖြင့်တော့..." }
+            ],
+            'Day 8': [
+                { en: "With regard to...", my: "...နဲ့ပတ်သက်ပြီးတော့..." }, { en: "It is worth considering...", my: "...ကို စဉ်းစားသင့်ပါတယ်" }, { en: "It is important to acknowledge...", my: "အသိအမှတ်ပြုဖို့ အရေးကြီးတာကတော့..." }
+            ],
+            'Day 9': [
+                { en: "In stark contrast to...", my: "...နဲ့ လုံးဝဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "A notable exception is...", my: "ထူးခြားတဲ့ချွင်းချက်ကတော့..." }, { en: "The evidence suggests that...", my: "အထောက်အထားတွေအရဆိုရင်..." }
+            ],
+            'Day 10': [
+                { en: "The core issue here is...", my: "ဒီကိစ္စရဲ့ အဓိကပြဿနာကတော့..." }, { en: "This phenomenon can be attributed to...", my: "ဒီဖြစ်ရပ်ဟာ...ကြောင့်လို့ ယူဆနိုင်ပါတယ်" }, { en: "The data overwhelmingly shows...", my: "အချက်အလက်တွေက အခိုင်အမာပြသနေတာက..." }
+            ],
+            'Day 11': [
+                { en: "It is clear that...", my: "ရှင်းလင်းစွာသိရတာကတော့..." }, { en: "To emphasize this point, ...", my: "ဒီအချက်ကို အလေးပေးပြောရရင်တော့..." }, { en: "This is primarily due to...", my: "ဒါကတော့ အဓိကအားဖြင့်...ကြောင့်ပါ" }
+            ],
+            'Day 12': [
+                { en: "This brings us to the question of...", my: "ဒါကတော့...ဆိုတဲ့ မေးခွန်းဆီကို ဦးတည်ပါတယ်" }, { en: "The problem stems from...", my: "ပြဿနာကတော့...ကနေ စတင်ခဲ့တာပါ" }, { en: "On balance, it seems that...", my: "ခြုံငုံသုံးသပ်ကြည့်ရင်တော့..." }
+            ],
+            'Day 13': [
+                { en: "Despite this, ...", my: "ဒါပေမဲ့လည်း..." }, { en: "Having considered all these factors, ...", my: "ဒီအချက်တွေအားလုံးကို စဉ်းစားပြီးတဲ့နောက်မှာတော့..." }, { en: "This point is particularly relevant because...", my: "ဒီအချက်က အထူးသက်ဆိုင်ရတဲ့အကြောင်းရင်းကတော့..." }
+            ],
+            'Day 14': [
+                { en: "In summary, ...", my: "အချုပ်အားဖြင့်..." }, { en: "It is often claimed that...", my: "...လို့ မကြာခဏဆိုလေ့ရှိကြတယ်" }, { en: "The counter-argument is that...", my: "ဆန့်ကျင်ဘက်အမြင်ကတော့..." }
+            ],
+            'Day 15': [
+                { en: "This theory is based on the premise that...", my: "ဒီသီအိုရီကတော့...ဆိုတဲ့ အယူအဆပေါ်မှာ အခြေခံပါတယ်" }, { en: "Another contributing factor is...", my: "နောက်ထပ်ပံ့ပိုးပေးတဲ့ အကြောင်းအရင်းကတော့..." }, { en: "To put it another way, ...", my: "အခြားနည်းဖြင့် ပြောရရင်တော့..." }
+            ],
+            'Day 16': [
+                { en: "The evidence presented above...", my: "အထက်မှာတင်ပြထားတဲ့ သက်သေအထောက်အထားတွေကတော့..." }, { en: "This demonstrates a clear link between...", my: "ဒါကတော့...တို့ကြားက ရှင်းလင်းတဲ့ဆက်နွှယ်မှုကို ပြသနေပါတယ်" }, { en: "It is generally acknowledged that...", my: "ယေဘုယျအားဖြင့်တော့ လက်ခံထားတာက..." }
+            ],
+            'Day 17': [
+                { en: "A further point to consider is...", my: "ထပ်ပြီးစဉ်းစားရမယ့်အချက်ကတော့..." }, { en: "It is true that...", my: "...ဆိုတာကတော့ အမှန်ပါ" }, { en: "However, it is also important to remember that...", my: "သို့သော်လည်း...ဆိုတာကို မှတ်မိဖို့လည်း အရေးကြီးပါတယ်" }
+            ],
+            'Day 18': [
+                { en: "As a consequence, ...", my: "အကျိုးဆက်အနေနဲ့..." }, { en: "The data suggests that...", my: "အချက်အလက်တွေကတော့...ကို ညွှန်ပြနေပါတယ်" }, { en: "From my point of view, ...", my: "ကျွန်တော့်အမြင်အရတော့..." }
+            ],
+            'Day 19': [
+                { en: "The most significant factor is...", my: "အရေးကြီးဆုံးအချက်ကတော့..." }, { en: "This is a complex issue because...", my: "ဒါကတော့ ရှုပ်ထွေးတဲ့ကိစ္စတစ်ခုပါ၊ ဘာကြောင့်လဲဆိုတော့..." }, { en: "While it is true that...", my: "...ဆိုတာအမှန်ဖြစ်သော်ငြားလည်း..." }
+            ],
+            'Day 20': [
+                { en: "In conclusion, it is clear that...", my: "နိဂုံးချုပ်ရရင်တော့...ဆိုတာ ရှင်းနေပါတယ်" }, { en: "Ultimately, the decision rests with...", my: "နောက်ဆုံးမှာတော့...က ဆုံးဖြတ်ရမှာပါ" }, { en: "There is a strong correlation between...", my: "...တို့ကြားမှာ ခိုင်မာတဲ့ဆက်နွှယ်မှုရှိပါတယ်" }
+            ],
+            'Day 21': [
+                { en: "It is often suggested that...", my: "...လို့ မကြာခဏ အကြံပြုကြပါတယ်" }, { en: "The fundamental issue is...", my: "အခြေခံအကျဆုံးပြဿနာကတော့..." }, { en: "In essence, this means that...", my: "အနှစ်ချုပ်အားဖြင့်ဆိုရင်တော့ ဒါက..." }
+            ],
+            'Day 22': [
+                { en: "This can be explained by...", my: "ဒါကို...နဲ့ ရှင်းပြနိုင်ပါတယ်" }, { en: "This trend is likely to continue...", my: "ဒီလမ်းကြောင်းက ဆက်လက်ဖြစ်ပေါ်နေနိုင်ပါတယ်" }, { en: "To conclude, it can be said that...", my: "နိဂုံးချုပ်အနေနဲ့ပြောရရင်တော့..." }
+            ],
+            'Day 23': [
+                { en: "Another perspective is that...", my: "နောက်ထပ်ရှုထောင့်တစ်ခုကတော့..." }, { en: "The primary cause is...", my: "အဓိကအကြောင်းအရင်းကတော့..." }, { en: "This has a profound impact on...", my: "ဒါက...ပေါ်မှာ နက်နဲတဲ့အကျိုးသက်ရောက်မှုရှိပါတယ်" }
+            ],
+            'Day 24': [
+                { en: "It is essential to recognize...", my: "အသိအမှတ်ပြုဖို့က မဖြစ်မနေလိုအပ်ပါတယ်" }, { en: "Despite the fact that...", my: "...ဆိုတဲ့အချက်ရှိပေမယ့်လည်း..." }, { en: "This leads to the question of...", my: "ဒီအချက်ကတော့...ဆိုတဲ့ မေးခွန်းကို ဖြစ်ပေါ်စေပါတယ်" }
+            ],
+            'Day 25': [
+                { en: "This perspective is rooted in...", my: "ဒီအမြင်ကတော့...ကနေ စတင်ပေါ်ပေါက်လာတာပါ" }, { en: "It is a widely accepted notion that...", my: "...ဆိုတဲ့အယူအဆကတော့ ကျယ်ကျယ်ပြန့်ပြန့် လက်ခံထားကြပါတယ်" }, { en: "In this regard, ...", my: "ဒီကိစ္စနဲ့ပတ်သက်ပြီးတော့..." }
+            ],
+            'Day 26': [
+                { en: "This is a key driver of...", my: "ဒါက...ရဲ့ အဓိကမောင်းနှင်အားတစ်ခုပါ" }, { en: "The main drawback is...", my: "အဓိကအားနည်းချက်ကတော့..." }, { en: "It is a common misconception that...", my: "လူတွေအမှားအယွင်းထင်တတ်တာကတော့..." }
+            ],
+            'Day 27': [
+                { en: "In simple terms, this means...", my: "ရိုးရိုးရှင်းရှင်းပြောရရင်တော့ ဒါက..." }, { en: "This is evident from...", my: "ဒါကတော့...ကနေ ထင်ရှားပါတယ်" }, { en: "The data reveals that...", my: "အချက်အလက်တွေက ဖော်ပြနေတာကတော့..." }
+            ],
+            'Day 28': [
+                { en: "One factor to consider is...", my: "စဉ်းစားသင့်တဲ့အချက်တစ်ခုကတော့..." }, { en: "The underlying issue is...", my: "အခြေခံကျတဲ့ပြဿနာကတော့..." }, { en: "This is a double-edged sword because...", my: "ဒါကတော့ အားသာချက်၊ အားနည်းချက် နှစ်ခုစလုံးပါပဲ၊ ဘာကြောင့်လဲဆိုတော့..." }
+            ],
+            'Day 29': [
+                { en: "The most striking finding is...", my: "အထင်ရှားဆုံးတွေ့ရှိချက်ကတော့..." }, { en: "It is not surprising that...", my: "...ဆိုတာ အံ့သြစရာမဟုတ်ပါဘူး" }, { en: "This suggests that...", my: "ဒါကတော့...ကို ညွှန်ပြနေပါတယ်" }
+            ],
+            'Day 30': [
+                { en: "In conclusion, the benefits outweigh the drawbacks...", my: "နိဂုံးချုပ်ရရင်တော့ အကျိုးကျေးဇူးတွေက အားနည်းချက်တွေထက် ပိုများပါတယ်..." }, { en: "Ultimately, the success depends on...", my: "နောက်ဆုံးမှာတော့ အောင်မြင်မှုဟာ...ပေါ်မှာ မူတည်ပါတယ်" }, { en: "The challenge lies in...", my: "စိန်ခေါ်မှုကတော့...မှာရှိပါတယ်" }
+            ],
+            'Day 31': [
+                { en: "The core argument centers on...", my: "အဓိကအချက်ကတော့...ပေါ်မှာ အခြေခံပါတယ်" }, { en: "This highlights the need for...", my: "ဒါက...လိုအပ်နေတာကို ပေါ်လွင်စေပါတယ်" }, { en: "To reiterate, ...", my: "ထပ်ခါတလဲလဲပြောရရင်တော့..." }
+            ],
+            'Day 32': [
+                { en: "The central theme is...", my: "အဓိကအကြောင်းအရာကတော့..." }, { en: "The research demonstrates a clear link between...", my: "ဒီသုတေသနကတော့...တို့ကြားက ရှင်းလင်းတဲ့ဆက်နွှယ်မှုကို သရုပ်ပြပါတယ်" }, { en: "It is widely accepted that...", my: "အများစုကတော့ လက်ခံထားကြတာက..." }
+            ],
+            'Day 33': [
+                { en: "From my standpoint, ...", my: "ကျွန်တော့်ရှုထောင့်ကနေကြည့်ရင်တော့..." }, { en: "This leads to the conclusion that...", my: "ဒါကတော့ နိဂုံးချုပ်အနေနဲ့...လို့ ပြောနိုင်ပါတယ်" }, { en: "This supports the idea that...", my: "ဒါကတော့...ဆိုတဲ့ အယူအဆကို ထောက်ခံပါတယ်" }
+            ],
+            'Day 34': [
+                { en: "A common misconception is that...", my: "အများစုမှားယွင်းစွာယူဆတတ်တာကတော့..." }, { en: "The most compelling reason is...", my: "အဆွဲဆောင်နိုင်ဆုံးအကြောင်းရင်းကတော့..." }, { en: "The analysis reveals that...", my: "ဆန်းစစ်ချက်ကတော့...ကို ဖော်ပြနေပါတယ်" }
+            ],
+            'Day 35': [
+                { en: "This can be contrasted with...", my: "ဒါကို...နဲ့ နှိုင်းယှဉ်ပြနိုင်ပါတယ်" }, { en: "The implication of this is...", my: "ဒီအချက်ရဲ့အကျိုးသက်ရောက်မှုကတော့..." }, { en: "It is important to emphasize that...", my: "...ကို အလေးပေးပြောဖို့က အရေးကြီးပါတယ်" }
+            ],
+            'Day 36': [
+                { en: "To put it simply, ...", my: "ရိုးရိုးရှင်းရှင်းပြောရရင်တော့..." }, { en: "In this essay, I will argue that...", my: "ဒီစာစီစာကုံးမှာတော့...လို့ ကျွန်တော်ငြင်းခုံပါ့မယ်" }, { en: "The benefits of this approach include...", my: "ဒီချဉ်းကပ်မှုရဲ့ အကျိုးကျေးဇူးတွေကတော့..." }
+            ],
+            'Day 37': [
+                { en: "The drawbacks, however, are...", my: "သို့သော်လည်း အားနည်းချက်တွေကတော့..." }, { en: "The data suggests a strong correlation between...", my: "အချက်အလက်တွေကတော့...တို့ကြားမှာ ခိုင်မာတဲ့ဆက်နွှယ်မှုရှိကြောင်း ညွှန်ပြနေပါတယ်" }, { en: "This is a complex issue with no easy solution.", my: "ဒါက ဖြေရှင်းရလွယ်ကူတဲ့နည်းလမ်းမရှိတဲ့ ရှုပ်ထွေးတဲ့ပြဿနာတစ်ခုပါ" }
+            ],
+            'Day 38': [
+                { en: "In short, ...", my: "အတိုချုပ်ပြောရရင်တော့..." }, { en: "Ultimately, the solution depends on...", my: "နောက်ဆုံးမှာတော့ ဖြေရှင်းချက်က...ပေါ်မှာ မူတည်ပါတယ်" }, { en: "There is a compelling argument that...", my: "...ဆိုတဲ့ ခိုင်မာတဲ့အငြင်းပွားချက်တစ်ခုရှိပါတယ်" }
+            ],
+            'Day 39': [
+                { en: "This is a common phenomenon in...", my: "ဒါကတော့...မှာ အဖြစ်များတဲ့ဖြစ်စဉ်တစ်ခုပါ" }, { en: "The root cause of the problem is...", my: "ပြဿနာရဲ့အခြေခံအကြောင်းရင်းကတော့..." }, { en: "This is a debatable issue because...", my: "ဒါကတော့ ငြင်းခုံစရာကိစ္စပါ၊ ဘာကြောင့်လဲဆိုတော့..." }
+            ],
+            'Day 40': [
+                { en: "The most significant finding is that...", my: "အရေးပါဆုံးတွေ့ရှိချက်ကတော့..." }, { en: "This is a clear indicator of...", my: "ဒါက...ကို ရှင်းရှင်းလင်းလင်းညွှန်ပြနေပါတယ်" }, { en: "In contrast to this perspective, ...", my: "ဒီရှုထောင့်နဲ့ ဆန့်ကျင်ဘက်အနေနဲ့..." }
+            ],
+            'Day 41': [
+                { en: "It is often said that...", my: "အများအားဖြင့်တော့ ပြောကြတာက..." }, { en: "This statement is supported by...", my: "ဒီပြောဆိုချက်ကတော့...နဲ့ ထောက်ခံထားပါတယ်" }, { en: "The potential consequences are...", my: "ဖြစ်လာနိုင်တဲ့အကျိုးဆက်တွေကတော့..." }
+            ],
+            'Day 42': [
+                { en: "The primary objective is...", my: "အဓိကရည်ရွယ်ချက်ကတော့..." }, { en: "This can be attributed to...", my: "ဒါက...ကြောင့်လို့ ယူဆနိုင်ပါတယ်" }, { en: "The evidence presented in this essay...", my: "ဒီစာစီစာကုံးမှာတင်ပြထားတဲ့ သက်သေအထောက်အထားတွေကတော့..." }
+            ],
+            'Day 43': [
+                { en: "A valid argument is that...", my: "မှန်ကန်တဲ့ငြင်းခုံချက်တစ်ခုကတော့..." }, { en: "In general, ...", my: "ယေဘုယျအားဖြင့်တော့..." }, { en: "The final point is...", my: "နောက်ဆုံးအချက်ကတော့..." }
+            ],
+            'Day 44': [
+                { en: "The benefits of... are often understated.", my: "...ရဲ့ အကျိုးကျေးဇူးတွေကို အများအားဖြင့် လျှော့တွက်ထားပါတယ်" }, { en: "The disadvantages of... are often overstated.", my: "...ရဲ့ အားနည်းချက်တွေကိုတော့ အများအားဖြင့် ချဲ့ကားပြောဆိုကြပါတယ်" }, { en: "In summary, there are both pros and cons.", my: "အချုပ်အားဖြင့်တော့ အားသာချက်နဲ့ အားနည်းချက်နှစ်မျိုးစလုံးရှိပါတယ်" }
+            ],
+            'Day 45': [
+                { en: "This suggests that...", my: "ဒါကတော့...ကို ညွှန်ပြနေပါတယ်" }, { en: "This demonstrates a need for...", my: "ဒါကတော့...လိုအပ်နေတာကို ပြသနေပါတယ်" }, { en: "The findings have implications for...", my: "ဒီတွေ့ရှိချက်တွေက...အတွက် အကျိုးသက်ရောက်မှုရှိပါတယ်" }
+            ],
+            'Day 46': [
+                { en: "The most logical conclusion is...", my: "အမှန်ကန်ဆုံးနိဂုံးချုပ်ကတော့..." }, { en: "This is a pivotal issue because...", my: "ဒါက အရေးကြီးတဲ့ကိစ္စတစ်ခုပါ၊ ဘာကြောင့်လဲဆိုတော့..." }, { en: "The best course of action is to...", my: "အကောင်းဆုံးလုပ်သင့်တဲ့အရာကတော့..." }
+            ],
+            'Day 47': [
+                { en: "It is reasonable to assume that...", my: "ဒါကို...လို့ယူဆတာက ကျိုးကြောင်းဆီလျော်ပါတယ်" }, { en: "The data, however, tells a different story.", my: "သို့သော်လည်း အချက်အလက်တွေကတော့ မတူတဲ့အကြောင်းအရာကို ဖော်ပြနေပါတယ်" }, { en: "This is a common trend in...", my: "ဒါက...မှာ အဖြစ်များတဲ့လမ်းကြောင်းတစ်ခုပါ" }
+            ],
+            'Day 48': [
+                { en: "The primary aim is to...", my: "အဓိကရည်ရွယ်ချက်ကတော့...ပါ" }, { en: "This can be attributed to...", my: "ဒါကတော့...ကြောင့်လို့ ယူဆနိုင်ပါတယ်" }, { en: "The research suggests that...", my: "သုတေသနကတော့...ကို ညွှန်ပြနေပါတယ်" }
+            ],
+            'Day 49': [
+                { en: "In contrast to this theory, ...", my: "ဒီသီအိုရီနဲ့ဆန့်ကျင်ဘက်အနေနဲ့..." }, { en: "This leads to the belief that...", my: "ဒီအချက်ကတော့...လို့ ယုံကြည်လာစေပါတယ်" }, { en: "The final point to consider is...", my: "နောက်ဆုံးစဉ်းစားရမယ့်အချက်ကတော့..." }
+            ],
+            'Day 50': [
+                { en: "It is widely agreed that...", my: "ကျယ်ကျယ်ပြန့်ပြန့်သဘောတူထားတာကတော့..." }, { en: "The overarching theme is...", my: "အဓိကအကြောင်းအရာကတော့..." }, { en: "This is a complex and multifaceted problem.", my: "ဒါကတော့ ရှုပ်ထွေးပြီး ရှုထောင့်ပေါင်းစုံကနေကြည့်ရမယ့် ပြဿနာတစ်ခုပါ" }
+            ]
+        };
+
+        const grammarData = [
+            { en: "Simple Present Tense", my: "ပစ္စုပ္ပန်ကာလရိုးရိုး" },
+            { en: "Present Perfect Tense", my: "ပစ္စုပ္ပန်ကာလပြီးစီး" },
+            { en: "Modal Verbs (can, must, should)", my: "ကြိယာအထောက်အကူများ" },
+            { en: "Passive Voice", my: "Passive အသံ" },
+            { en: "Complex Sentences", my: "စာကြောင်းရှုပ်ထွေးများ" }
+        ];
+
+        const vocabGrid = document.getElementById('vocabulary-grid');
+        const phraseGrid = document.getElementById('phrases-grid');
+        const grammarList = document.getElementById('grammar-list');
+        const vocabSearch = document.getElementById('vocab-search');
+        const phraseSearch = document.getElementById('phrase-search');
+        const tabs = document.getElementById('tabs');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const daySelect = document.getElementById('day-select');
+
+        let currentDay = 'Day 1';
+        let currentTab = 'vocabulary';
+
+        // Dropdown menu ကို populate လုပ်ခြင်း
+        for (let i = 1; i <= 100; i++) {
+            const option = document.createElement('option');
+            option.value = `Day ${i}`;
+            option.innerText = `Day ${i}`;
+            daySelect.appendChild(option);
+        }
+
+        function createCard(item) {
+            const card = document.createElement('div');
+            card.className = 'flip-card h-32 cursor-pointer';
+            card.innerHTML = `
+                <div class="flip-card-inner">
+                    <div class="flip-card-front font-semibold text-lg p-2">${item.en}</div>
+                    <div class="flip-card-back font-semibold text-lg p-2">${item.my}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                card.classList.toggle('is-flipped');
+                if (card.classList.contains('is-flipped')) {
+                    if (typeof responsiveVoice !== 'undefined') {
+                        responsiveVoice.speak(item.en, "UK English Male");
+                    }
+                }
+            });
+            return card;
+        }
+
+        function displayData(day, tab) {
+            if (tab === 'vocabulary') {
+                vocabGrid.innerHTML = '';
+                const data = allVocabData[day] || [];
+                data.forEach(item => vocabGrid.appendChild(createCard(item)));
+            } else if (tab === 'phrases') {
+                phraseGrid.innerHTML = '';
+                const data = allPhraseData[day] || [];
+                data.forEach(item => phraseGrid.appendChild(createCard(item)));
+            } else if (tab === 'grammar') {
+                grammarList.innerHTML = '';
+                const ul = document.createElement('ul');
+                ul.className = 'space-y-4';
+                grammarData.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-center';
+                    li.innerHTML = `<span class="font-semibold text-gray-700">${item.en}</span><span class="text-blue-500 font-medium">${item.my}</span>`;
+                    ul.appendChild(li);
+                });
+                grammarList.appendChild(ul);
+            }
+        }
+
+        function filterCards(grid, searchTerm) {
+            const cards = grid.children;
+            for (let card of cards) {
+                const frontText = card.querySelector('.flip-card-front').textContent.toLowerCase();
+                const backText = card.querySelector('.flip-card-back').textContent.toLowerCase();
+                if (frontText.includes(searchTerm) || backText.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        }
+        
+        vocabSearch.addEventListener('keyup', () => {
+            filterCards(vocabGrid, vocabSearch.value.toLowerCase());
+        });
+
+        phraseSearch.addEventListener('keyup', () => {
+            filterCards(phraseGrid, phraseSearch.value.toLowerCase());
+        });
+
+        tabs.addEventListener('click', (e) => {
+            const targetButton = e.target.closest('.tab-btn');
+            if (targetButton) {
+                currentTab = targetButton.dataset.tab;
+                
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+                targetButton.classList.add('tab-active');
+
+                tabPanes.forEach(pane => {
+                    if (pane.id === `${currentTab}-content`) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                });
+                displayData(currentDay, currentTab);
+            }
+        });
+        
+        daySelect.addEventListener('change', (e) => {
+            currentDay = e.target.value;
+            displayData(currentDay, currentTab);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayData(currentDay, currentTab);
+        });
+    </script>
+</body>
+</html>
